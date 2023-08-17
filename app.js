@@ -11,7 +11,7 @@ function addDrink(drinkType, alcoholPercent) {
             alcoholOunces = 16;
             break;
         case 'bigBeer':
-            alcoholOunces = 22;
+            alcoholOunces = 20;
             break;
         case 'wineGlass':
             alcoholOunces = 5;
