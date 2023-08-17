@@ -137,7 +137,8 @@ button.tab:hover, button.tab.active {
     padding: 5px 0;
 }
 
-label {
-    display: block;
+.label {
+    font-size: 1.2em;
+    color: #333;
     margin: 0.5em 0;
 }
