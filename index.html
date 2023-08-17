@@ -10,12 +10,17 @@
 </head>
 <body>
     <!-- Your htmx code goes here -->
-    <input type="number" id="alcoholPercent" min="1" max="60" value="5">
-    <button id="beerGlass" onclick="addDrink('beerGlass', document.getElementById('alcoholPercent').value)">Beer Glass</button>
-    <button id="beerPint" onclick="addDrink('beerPint', document.getElementById('alcoholPercent').value)">Beer Pint</button>
-    <button id="bigBeer" onclick="addDrink('bigBeer', document.getElementById('alcoholPercent').value)">Big Beer</button>
-    <button id="wineGlass" onclick="addDrink('wineGlass', document.getElementById('alcoholPercent').value)">Glass of Wine</button>
-    <button id="cocktail" onclick="addDrink('cocktail', document.getElementById('alcoholPercent').value)">Cocktail</button>
+    <div id="presetButtons">
+        <button id="beerGlass" onclick="setPreset('beerGlass')">Beer Glass</button>
+        <button id="beerPint" onclick="setPreset('beerPint')">Beer Pint</button>
+        <button id="bigBeer" onclick="setPreset('bigBeer')">Big Beer</button>
+        <button id="wineGlass" onclick="setPreset('wineGlass')">Glass of Wine</button>
+        <button id="cocktail" onclick="setPreset('cocktail')">Cocktail</button>
+    </div>
+    <div id="sliderGrid">
+        <input type="range" id="drinkSize" min="1" max="20" value="5" oninput="updateDrinkSize(value)">
+        <input type="range" id="alcoholStrength" min="1" max="60" value="5" oninput="updateAlcoholStrength(value)">
+    </div>
     <div id="alcoholCount">Current Alcohol Count: 0</div>
     <script src="app.js"></script>
     <script>

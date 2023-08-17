@@ -27,6 +27,22 @@ button:hover {
     background-color: #45a049;
 }
 
+#presetButtons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2em;
+}
+
+#sliderGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+}
+
+#drinkSize, #alcoholStrength {
+    width: 100%;
+}
+
 #alcoholCount {
     margin-top: 2em;
     font-size: 1.5em;

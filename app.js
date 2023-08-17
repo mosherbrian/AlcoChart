@@ -1,25 +1,48 @@
 // Your JavaScript code will go here
 var dailyAlcoholIntake = 0;
 
-function addDrink(drinkType, alcoholPercent) {
-    var alcoholOunces;
-    switch(drinkType) {
+var drinkSize = 5;
+var alcoholStrength = 5;
+
+function setPreset(preset) {
+    switch(preset) {
         case 'beerGlass':
-            alcoholOunces = 12;
+            drinkSize = 12;
+            alcoholStrength = 5;
             break;
         case 'beerPint':
-            alcoholOunces = 16;
+            drinkSize = 16;
+            alcoholStrength = 5;
             break;
         case 'bigBeer':
-            alcoholOunces = 20;
+            drinkSize = 20;
+            alcoholStrength = 5;
             break;
         case 'wineGlass':
-            alcoholOunces = 5;
+            drinkSize = 5;
+            alcoholStrength = 12;
             break;
         case 'cocktail':
-            alcoholOunces = 2;
+            drinkSize = 2;
+            alcoholStrength = 40;
             break;
     }
-    dailyAlcoholIntake += alcoholOunces * alcoholPercent;
+    document.getElementById('drinkSize').value = drinkSize;
+    document.getElementById('alcoholStrength').value = alcoholStrength;
+    updateAlcoholCount();
+}
+
+function updateDrinkSize(value) {
+    drinkSize = value;
+    updateAlcoholCount();
+}
+
+function updateAlcoholStrength(value) {
+    alcoholStrength = value;
+    updateAlcoholCount();
+}
+
+function updateAlcoholCount() {
+    dailyAlcoholIntake = drinkSize * alcoholStrength;
     document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
 }
