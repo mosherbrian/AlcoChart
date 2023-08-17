@@ -83,6 +83,7 @@ button:hover {
     transform: rotate(-90deg);
     transform-origin: left bottom;
     overflow: visible;
+    white-space: nowrap;
 }
 
 .label {
