@@ -6,6 +6,8 @@ body {
     padding: 2em;
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 button {
@@ -130,7 +132,7 @@ button:hover {
 }
 
 #alcoholStrength {
-    width: 175px;
+    width: 300px;
     height: 8px;
     padding: 5px 0;
 }
