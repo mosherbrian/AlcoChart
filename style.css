@@ -70,13 +70,17 @@ button:hover {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    position: absolute;
+    bottom: 0;
 }
 
 #yAxisLabels {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    transform: rotate(-90deg);
+    position: absolute;
+    left: 0;
+    transform: rotate(0deg);
 }
 
 .label {
