@@ -21,5 +21,5 @@ function addDrink(drinkType, alcoholPercent) {
             break;
     }
     dailyAlcoholIntake += alcoholOunces * alcoholPercent;
-    console.log('Daily alcohol intake: ' + dailyAlcoholIntake);
+    document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
 }
