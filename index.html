@@ -10,18 +10,37 @@
 </head>
 <body>
     <!-- Your htmx code goes here -->
-    <div id="presetButtons">
-        <button id="beerGlass" onclick="setPreset('beerGlass')">Beer Glass</button>
-        <button id="beerPint" onclick="setPreset('beerPint')">Beer Pint</button>
-        <button id="bigBeer" onclick="setPreset('bigBeer')">Big Beer</button>
-        <button id="wineGlass" onclick="setPreset('wineGlass')">Glass of Wine</button>
-        <button id="cocktail" onclick="setPreset('cocktail')">Cocktail</button>
-    </div>
-    <label for="drinkSize">Drink Size: <span id="drinkSizeDisplay">5</span></label>
-    <input type="range" id="drinkSize" min="0" max="24" value="5" oninput="updateDrinkSize(this.value)">
-    <label for="alcoholStrength">Alcohol Strength: <span id="alcoholStrengthDisplay">5</span></label>
-    <input type="range" id="alcoholStrength" min="0" max="100" value="5" oninput="updateAlcoholStrength(this.value)">
     <div id="alcoholCount">Current Alcohol Count: 0</div>
+    <div id="tabs">
+        <button class="tab" onclick="changeTab('beer')">Beer</button>
+        <button class="tab" onclick="changeTab('wine')">Wine</button>
+        <button class="tab" onclick="changeTab('cocktail')">Cocktail</button>
+    </div>
+    <div id="beerTab" class="tabContent">
+        <div class="column">
+            <button onclick="setBeerSize(8)">8oz</button>
+            <button onclick="setBeerSize(12)">12oz</button>
+            <button onclick="setBeerSize(16)">16oz</button>
+            <button onclick="setBeerSize(20)">20oz</button>
+            <button onclick="setBeerSize(32)">32oz</button>
+        </div>
+        <div class="column">
+            <button onclick="setBeerStrength(4)">4%</button>
+            <button onclick="setBeerStrength(5)">5%</button>
+            <button onclick="setBeerStrength(6)">6%</button>
+            <button onclick="setBeerStrength(7)">7%</button>
+            <button onclick="setBeerStrength(8)">8%</button>
+            <button onclick="setBeerStrength(9)">9%</button>
+            <button onclick="setBeerStrength(10)">10%</button>
+            <input type="number" id="customBeerStrength" min="0" max="100" oninput="setBeerStrength(this.value)">
+        </div>
+    </div>
+    <div id="wineTab" class="tabContent">
+        <!-- Wine tab content goes here -->
+    </div>
+    <div id="cocktailTab" class="tabContent">
+        <!-- Cocktail tab content goes here -->
+    </div>
     <script src="app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
