@@ -17,33 +17,10 @@
         <button id="wineGlass" onclick="setPreset('wineGlass')">Glass of Wine</button>
         <button id="cocktail" onclick="setPreset('cocktail')">Cocktail</button>
     </div>
-    <div id="chartArea" onclick="updateValues(event)">
-        <div id="gridLines">
-            <div class="gridLine"></div>
-            <div class="gridLine"></div>
-            <div class="gridLine"></div>
-        </div>
-        <div id="labels">
-            <div id="xAxisLabels">
-                <div class="label">0</div>
-                <div class="label">20</div>
-                <div class="label">40</div>
-                <div class="label">60</div>
-                <div class="label">80</div>
-                <div class="label">100</div>
-            </div>
-            <div id="yAxisLabels">
-                <div class="label">0</div>
-                <div class="label">4</div>
-                <div class="label">8</div>
-                <div class="label">12</div>
-                <div class="label">16</div>
-                <div class="label">20</div>
-                <div class="label">24</div>
-            </div>
-        </div>
-        <div id="selectedPoint"></div>
-    </div>
+    <label for="drinkSize">Drink Size: <span id="drinkSizeDisplay">5</span></label>
+    <input type="range" id="drinkSize" min="0" max="24" value="5" oninput="updateDrinkSize(this.value)">
+    <label for="alcoholStrength">Alcohol Strength: <span id="alcoholStrengthDisplay">5</span></label>
+    <input type="range" id="alcoholStrength" min="0" max="100" value="5" oninput="updateAlcoholStrength(this.value)">
     <div id="alcoholCount">Current Alcohol Count: 0</div>
     <label for="drinkSize">Drink Size: <span id="drinkSizeDisplay">5</span></label>
     <input type="range" id="drinkSize" min="0" max="20" value="5" oninput="updateDrinkSize(this.value)">
