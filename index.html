@@ -54,15 +54,33 @@
     </div>
     <div id="cocktailTab" class="tabContent">
         <div class="column">
-            <button onclick="setCocktailSize(2)">2oz</button>
-            <button onclick="setCocktailSize(3)">3oz</button>
-            <button onclick="setCocktailSize(4)">4oz</button>
+            <button onclick="setCocktailBaseSize(1.5)">1.5oz</button>
+            <button onclick="setCocktailBaseSize(2)">2oz</button>
+            <button onclick="setCocktailBaseSize(2.25)">2.25oz</button>
+            <button onclick="setCocktailBaseSize(2.5)">2.5oz</button>
+            <button onclick="setCocktailBaseSize(2.75)">2.75oz</button>
+            <button onclick="setCocktailBaseSize(3)">3oz</button>
         </div>
         <div class="column">
-            <button onclick="setCocktailStrength(20)">20%</button>
-            <button onclick="setCocktailStrength(30)">30%</button>
-            <button onclick="setCocktailStrength(40)">40%</button>
-            <input type="number" id="customCocktailStrength" min="0" max="100" oninput="setCocktailStrength(this.value)">
+            <button onclick="setCocktailBaseStrength(20)">20%</button>
+            <button onclick="setCocktailBaseStrength(30)">30%</button>
+            <button onclick="setCocktailBaseStrength(40)">40%</button>
+            <button onclick="setCocktailBaseStrength(45)">45%</button>
+            <button onclick="setCocktailBaseStrength(50)">50%</button>
+            <button onclick="setCocktailBaseStrength(60)">60%</button>
+            <input type="number" id="customCocktailBaseStrength" min="0" max="100" oninput="setCocktailBaseStrength(this.value)">
+        </div>
+        <div class="column">
+            <button onclick="setCocktailModifierSize(0.25)">1/4oz</button>
+            <button onclick="setCocktailModifierSize(0.375)">3/8oz</button>
+            <button onclick="setCocktailModifierSize(0.5)">1/2oz</button>
+            <button onclick="setCocktailModifierSize(0.75)">3/4oz</button>
+        </div>
+        <div class="column">
+            <button onclick="setCocktailModifierStrength(10)">10%</button>
+            <button onclick="setCocktailModifierStrength(20)">20%</button>
+            <button onclick="setCocktailModifierStrength(30)">30%</button>
+            <input type="number" id="customCocktailModifierStrength" min="0" max="100" oninput="setCocktailModifierStrength(this.value)">
         </div>
     </div>
     <script src="app.js"></script>
