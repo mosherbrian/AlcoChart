@@ -53,6 +53,23 @@ function updateValues(event) {
     document.getElementById('selectedPoint').style.left = x + 'px';
     document.getElementById('selectedPoint').style.top = y + 'px';
 
+    document.getElementById('drinkSize').value = drinkSize;
+    document.getElementById('drinkSizeDisplay').textContent = drinkSize.toFixed(2);
+    document.getElementById('alcoholStrength').value = alcoholStrength;
+    document.getElementById('alcoholStrengthDisplay').textContent = alcoholStrength.toFixed(2);
+
+    updateAlcoholCount();
+}
+
+function updateDrinkSize(value) {
+    drinkSize = value;
+    document.getElementById('drinkSizeDisplay').textContent = value;
+    updateAlcoholCount();
+}
+
+function updateAlcoholStrength(value) {
+    alcoholStrength = value;
+    document.getElementById('alcoholStrengthDisplay').textContent = value;
     updateAlcoholCount();
 }
 
