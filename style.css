@@ -3,19 +3,34 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1em;
+    padding: 2em;
     font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
 }
 
 button {
     margin: 0.5em;
     padding: 0.5em 1em;
     font-size: 1em;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
 }
 
 #alcoholCount {
     margin-top: 2em;
     font-size: 1.5em;
+    color: #333;
 }
 
 @media (max-width: 480px) {
