@@ -55,6 +55,15 @@ function changeTab(tab) {
     document.getElementById(tab + 'Tab').style.display = 'block';
 }
 
+function initTabs() {
+    var tabs = document.getElementsByClassName('tabContent');
+    for (var i = 1; i < tabs.length; i++) {
+        tabs[i].style.display = 'none';
+    }
+}
+
+window.onload = initTabs;
+
 function updateAlcoholCount() {
     dailyAlcoholIntake = (drinkSize * alcoholStrength) + (modifierSize * modifierStrength);
     document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
