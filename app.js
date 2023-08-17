@@ -44,10 +44,10 @@ function updateAlcoholStrength(value) {
 
 function updateValues(event) {
     var x = event.clientX - event.target.offsetLeft;
-    var y = event.clientY - event.target.offsetTop;
+    var y = event.target.offsetHeight - (event.clientY - event.target.offsetTop);
 
     // Assuming the chart area is 300x300 units
-    drinkSize = (300 - y) / 12.5; // Scale to 0-24
+    drinkSize = y / 12.5; // Scale to 0-24
     alcoholStrength = x / 3; // Scale to 0-100
 
     document.getElementById('selectedPoint').style.left = x + 'px';
