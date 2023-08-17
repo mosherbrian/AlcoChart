@@ -10,29 +10,24 @@ body {
     margin: 0 auto;
 }
 
-button {
-    margin: 0.5em;
-    padding: 0.5em 1em;
-    font-size: 1em;
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    transition-duration: 0.4s;
+button.tab {
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    background-color: #f1f1f1;
+    border-bottom: none;
+    margin-bottom: -1px;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #45a049;
+button.tab:hover, button.tab.active {
+    background-color: #ddd;
+    border-bottom: 2px solid #4CAF50;
 }
 
-#presetButtons {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 2em;
+.tabContent {
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
 }
 
 #chartArea {
