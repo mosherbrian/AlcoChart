@@ -80,9 +80,12 @@ button:hover {
     height: 100%;
     position: absolute;
     left: 0;
+    overflow: visible;
+}
+
+#yAxisLabels .label {
     transform: rotate(-90deg);
     transform-origin: left bottom;
-    overflow: visible;
     white-space: nowrap;
 }
 
