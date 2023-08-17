@@ -42,6 +42,20 @@ function updateAlcoholStrength(value) {
     updateAlcoholCount();
 }
 
+function updateValues(event) {
+    var x = event.clientX - event.target.offsetLeft;
+    var y = event.clientY - event.target.offsetTop;
+
+    // Assuming the chart area is 100x100 units
+    drinkSize = x / 3; // Scale to 0-33
+    alcoholStrength = (300 - y) / 3; // Scale to 0-100, invert y axis
+
+    document.getElementById('selectedPoint').style.left = x + 'px';
+    document.getElementById('selectedPoint').style.top = y + 'px';
+
+    updateAlcoholCount();
+}
+
 function updateAlcoholCount() {
     dailyAlcoholIntake = drinkSize * alcoholStrength;
     document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
