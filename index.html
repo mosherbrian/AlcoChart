@@ -18,8 +18,25 @@
         <button id="cocktail" onclick="setPreset('cocktail')">Cocktail</button>
     </div>
     <div id="chartArea" onclick="updateValues(event)">
-        <div id="gridLines"></div>
-        <div id="labels"></div>
+        <div id="gridLines">
+            <div class="gridLine"></div>
+            <div class="gridLine"></div>
+            <div class="gridLine"></div>
+        </div>
+        <div id="labels">
+            <div id="xAxisLabels">
+                <div class="label">0</div>
+                <div class="label">10</div>
+                <div class="label">20</div>
+                <div class="label">30</div>
+            </div>
+            <div id="yAxisLabels">
+                <div class="label">0</div>
+                <div class="label">10</div>
+                <div class="label">20</div>
+                <div class="label">30</div>
+            </div>
+        </div>
         <div id="selectedPoint"></div>
     </div>
     <div id="alcoholCount">Current Alcohol Count: 0</div>
