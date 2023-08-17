@@ -34,12 +34,17 @@ function setCocktailBaseStrength(strength) {
     updateAlcoholCount();
 }
 
+var modifierSize = 0;
+var modifierStrength = 0;
+
 function setCocktailModifierSize(size) {
-    // Add your logic here
+    modifierSize = size;
+    updateAlcoholCount();
 }
 
 function setCocktailModifierStrength(strength) {
-    // Add your logic here
+    modifierStrength = strength;
+    updateAlcoholCount();
 }
 
 function changeTab(tab) {
@@ -51,6 +56,6 @@ function changeTab(tab) {
 }
 
 function updateAlcoholCount() {
-    dailyAlcoholIntake = drinkSize * alcoholStrength;
+    dailyAlcoholIntake = (drinkSize * alcoholStrength) + (modifierSize * modifierStrength);
     document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
 }
