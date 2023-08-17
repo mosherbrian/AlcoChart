@@ -36,10 +36,30 @@
         </div>
     </div>
     <div id="wineTab" class="tabContent">
-        <!-- Wine tab content goes here -->
+        <div class="column">
+            <button onclick="setWineSize(5)">5oz</button>
+            <button onclick="setWineSize(8)">8oz</button>
+            <button onclick="setWineSize(12)">12oz</button>
+        </div>
+        <div class="column">
+            <button onclick="setWineStrength(12)">12%</button>
+            <button onclick="setWineStrength(14)">14%</button>
+            <button onclick="setWineStrength(16)">16%</button>
+            <input type="number" id="customWineStrength" min="0" max="100" oninput="setWineStrength(this.value)">
+        </div>
     </div>
     <div id="cocktailTab" class="tabContent">
-        <!-- Cocktail tab content goes here -->
+        <div class="column">
+            <button onclick="setCocktailSize(2)">2oz</button>
+            <button onclick="setCocktailSize(3)">3oz</button>
+            <button onclick="setCocktailSize(4)">4oz</button>
+        </div>
+        <div class="column">
+            <button onclick="setCocktailStrength(20)">20%</button>
+            <button onclick="setCocktailStrength(30)">30%</button>
+            <button onclick="setCocktailStrength(40)">40%</button>
+            <input type="number" id="customCocktailStrength" min="0" max="100" oninput="setCocktailStrength(this.value)">
+        </div>
     </div>
     <script src="app.js"></script>
     <script>
