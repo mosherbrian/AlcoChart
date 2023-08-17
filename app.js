@@ -17,7 +17,7 @@ function addDrink(drinkType, alcoholPercent) {
             alcoholOunces = 5;
             break;
         case 'cocktail':
-            alcoholOunces = 1.5;
+            alcoholOunces = 3;
             break;
     }
     dailyAlcoholIntake += alcoholOunces * alcoholPercent;
