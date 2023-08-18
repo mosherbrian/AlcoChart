@@ -1,0 +1,42 @@
+{
+  "Header": {
+    "title": {
+      "text": "Alcohol Intake Tracker",
+      "color": "blue",
+      "fontSize": "24px",
+      "position": "centered",
+      "description": "Blue, centered title at the top."
+    },
+    "score": {
+      "value": 50,
+      "description": "Numeric score representing the user's alcohol intake."
+    }
+  },
+
+  "Dial": {
+    "Type": {
+      "options": ["Beer", "Wine", "Cocktail"],
+      "description": "Primary dial to select drink type."
+    },
+    "Size": {
+      "defaultOptions": [],
+      "description": "Secondary dial that updates based on 'Type' selection, showing relevant drink sizes."
+    },
+    "Strength": {
+      "defaultOptions": [],
+      "description": "Tertiary dial that updates based on 'Type' to show alcohol strengths."
+    },
+    "behavior": "Dials are interlinked; choosing a 'Type' updates 'Size' options, and so forth."
+  },
+
+  "feedbackMechanism": {
+    "successNotification": {
+      "text": "Drink added!",
+      "color": "green",
+      "displayDuration": "3 seconds",
+      "description": "Toast notification after a drink addition."
+    }
+  },
+
+  "useCaseScenario": "Mike spins the 'Type' dial to 'Wine', then selects size and strength using the subsequent dials. The score is updated."
+}
