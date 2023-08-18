@@ -1,0 +1,43 @@
+{
+  "Header": {
+    "title": {
+      "text": "Alcohol Intake Tracker",
+      "color": "blue",
+      "fontSize": "24px",
+      "position": "centered",
+      "description": "A blue, centered title at the top of the page."
+    },
+    "score": {
+      "value": 50,
+      "description": "Numeric score that sits below the title, representing user's alcohol intake."
+    }
+  },
+
+  "ButtonGroup": {
+    "buttons": ["Beer", "Wine", "Cocktail"],
+    "description": "Three horizontally-aligned buttons of equal width. A clicked button changes to a darker shade.",
+    "useCase": "User selects a drink type, which then displays relevant options in the ListView."
+  },
+
+  "ListView": {
+    "default": "Beer",
+    "options": ["12oz, 4%", "16oz, 5%", "24oz, 4.5%"],
+    "style": {
+      "backgroundColor": "lightgrey",
+      "fontColor": "black"
+    },
+    "description": "List of clickable options displayed vertically. Each option has a light grey background and black text.",
+    "behavior": "Upon selecting an option, the score at the top updates instantly without requiring a page refresh."
+  },
+
+  "feedbackMechanism": {
+    "successNotification": {
+      "text": "Drink added successfully!",
+      "color": "green",
+      "displayDuration": "3 seconds",
+      "description": "A toast notification that appears for 3 seconds after a drink is added."
+    }
+  },
+
+  "useCaseScenario": "John opens the app, selects 'Wine' and then '5oz, 12%'. The score updates, and he sees a green toast notification."
+}
