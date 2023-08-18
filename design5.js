@@ -27,6 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 totalAlcoholIntake += drinkSize * alcoholPercentage;
                 alcoholTallyEl.textContent = Math.round(totalAlcoholIntake); // Display as a whole number
+
+                // Show toast notification
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 2000);
+
+                // Close accordion menu
+                grandParentContent.style.display = 'none';
+                parentContent.style.display = 'none';
+                this.style.display = 'none';
             }
         });
     });
