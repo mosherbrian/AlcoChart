@@ -39,7 +39,14 @@ function initTabs() {
     }
 }
 
-window.onload = initTabs;
+window.onload = function() {
+    initTabs();
+    // Change the color of all buttons
+    var buttons = document.getElementsByTagName('button');
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].style.backgroundColor = 'blue';
+    }
+};
 
 function updateAlcoholCount() {
     dailyAlcoholIntake = drinkSize * alcoholStrength;
