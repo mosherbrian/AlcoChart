@@ -68,3 +68,7 @@ function updateAlcoholCount() {
     dailyAlcoholIntake = (drinkSize * alcoholStrength) + (modifierSize * modifierStrength);
     document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
 }
+
+function loadDesign(design) {
+    // Add your code here to load the design
+}
