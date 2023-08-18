@@ -39,14 +39,15 @@ function initTabs() {
     }
 }
 
-window.onload = function() {
+function applyDesign1() {
     initTabs();
     // Change the color of all buttons
     var buttons = document.getElementsByTagName('button');
     for (var i = 0; i < buttons.length; i++) {
         buttons[i].style.backgroundColor = 'blue';
     }
-};
+}
+window.onload = applyDesign1;
 
 function updateAlcoholCount() {
     dailyAlcoholIntake = drinkSize * alcoholStrength;

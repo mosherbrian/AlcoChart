@@ -81,6 +81,11 @@ function loadDesign(design) {
         var script = document.createElement('script');
         script.src = 'design1/app.js';
         script.id = 'designScript';
+        script.onload = function() {
+            if (typeof applyDesign1 === 'function') {
+                applyDesign1();
+            }
+        };
         document.head.appendChild(script);
         var link = document.createElement('link');
         link.rel = 'stylesheet';
