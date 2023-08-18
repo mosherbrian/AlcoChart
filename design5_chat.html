@@ -199,16 +199,19 @@
 
         buttons.forEach(button => {
             button.addEventListener('click', function() {
-                this.classList.toggle('active');
                 const content = this.nextElementSibling;
-                if (content.style.display === "block") {
-                    content.style.display = "none";
-                } else {
-                    content.style.display = "block";
+                this.classList.toggle('active');
+
+                if (content) {
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
+                    }
                 }
 
                 // Check if the clicked button is a final selection (Alcohol Percentage)
-                if (content && content.style.display !== "block") {
+                if (this.nextElementSibling && this.nextElementSibling.tagName !== "DIV") {
                     const parentContent = this.parentElement;
                     const grandParentContent = parentContent.parentElement;
 
