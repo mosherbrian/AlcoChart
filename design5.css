@@ -64,6 +64,11 @@
         width: 100%;
     }
 
+    .accordion-btn {
+        width: 100%;
+        font-size: 1.5em;
+    }
+
     .tally-display {
         width: 100%;
         font-size: 2em;
