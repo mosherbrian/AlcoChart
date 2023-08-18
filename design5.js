@@ -53,12 +53,21 @@ function createAccordion(data) {
 
         var optionsElement = document.createElement('div');
         optionsElement.classList.add('accordion-options');
-        level.options.forEach(function(option) {
-            var optionElement = document.createElement('div');
-            optionElement.textContent = option;
-            optionElement.classList.add('accordion-option');
-            optionsElement.appendChild(optionElement);
-        });
+        if (Array.isArray(level.options)) {
+            level.options.forEach(function(option) {
+                var optionElement = document.createElement('div');
+                optionElement.textContent = option;
+                optionElement.classList.add('accordion-option');
+                optionsElement.appendChild(optionElement);
+            });
+        } else {
+            Object.keys(level.options).forEach(function(key) {
+                var optionElement = document.createElement('div');
+                optionElement.textContent = key;
+                optionElement.classList.add('accordion-option');
+                optionsElement.appendChild(optionElement);
+            });
+        }
         accordion.appendChild(optionsElement);
     });
 }
