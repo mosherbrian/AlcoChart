@@ -216,7 +216,7 @@
                     const grandParentContent = parentContent.parentElement;
 
                     const drinkSize = parseFloat(parentContent.previousElementSibling.textContent.replace('oz', ''));
-                    const alcoholPercentage = parseFloat(this.textContent.replace('%', '')) / 100;
+                    const alcoholPercentage = parseFloat(this.textContent.replace('%', ''));
 
                     totalAlcoholIntake += drinkSize * alcoholPercentage;
                     alcoholTallyEl.textContent = totalAlcoholIntake.toFixed(2); // Display with 2 decimal places
