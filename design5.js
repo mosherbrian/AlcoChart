@@ -53,6 +53,7 @@ function createAccordion(data) {
 
         var optionsElement = document.createElement('div');
         optionsElement.classList.add('accordion-options');
+        optionsElement.style.display = 'none'; // Hide the options initially
         if (Array.isArray(level.options)) {
             level.options.forEach(function(option) {
                 var optionElement = document.createElement('div');
@@ -69,6 +70,12 @@ function createAccordion(data) {
             });
         }
         accordion.appendChild(optionsElement);
+
+        // Add a click event listener to the level
+        levelElement.addEventListener('click', function() {
+            // Toggle the display of the options
+            optionsElement.style.display = optionsElement.style.display === 'none' ? 'block' : 'none';
+        });
     });
 }
 
