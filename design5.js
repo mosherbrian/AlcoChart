@@ -61,7 +61,7 @@ function createAccordion(data, parentElement) {
                 var optionElement = document.createElement('div');
                 optionElement.textContent = option;
                 optionElement.classList.add('accordion-option');
-                if (optionsElement !== undefined) {
+                if (optionsElement) {
                     optionsElement.appendChild(optionElement);
                 }
             });
@@ -70,7 +70,7 @@ function createAccordion(data, parentElement) {
                 var optionElement = document.createElement('div');
                 optionElement.textContent = key;
                 optionElement.classList.add('accordion-option');
-                if (optionsElement !== undefined) {
+                if (optionsElement) {
                     optionsElement.appendChild(optionElement);
                 }
 
