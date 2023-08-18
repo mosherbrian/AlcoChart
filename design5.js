@@ -49,9 +49,9 @@ function createAccordion(data, parentElement) {
         console.error('Invalid data supplied to createAccordion: ', data);
         return;
     }
-    data.forEach(function(level) {
+    data[0].options.forEach(function(option) {
         var levelElement = document.createElement('div');
-        levelElement.textContent = level.name;
+        levelElement.textContent = option;
         levelElement.classList.add('accordion-level');
         parentElement.appendChild(levelElement);
 
