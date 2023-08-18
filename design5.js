@@ -45,6 +45,10 @@ var accordionData = [
 
 // Function to create the accordion structure
 function createAccordion(data, parentElement) {
+    if (!Array.isArray(data)) {
+        console.error('Invalid data supplied to createAccordion: ', data);
+        return;
+    }
     data.forEach(function(level) {
         var levelElement = document.createElement('div');
         levelElement.textContent = level.name;
