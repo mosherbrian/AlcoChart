@@ -58,10 +58,10 @@ function createAccordion(data, parentElement) {
 
         if (Array.isArray(level.options)) {
             level.options.forEach(function(option) {
-                var optionElement = document.createElement('div');
-                optionElement.textContent = option;
-                optionElement.classList.add('accordion-option');
                 if (optionsElement) {
+                    var optionElement = document.createElement('div');
+                    optionElement.textContent = option;
+                    optionElement.classList.add('accordion-option');
                     optionsElement.appendChild(optionElement);
                 }
             });
