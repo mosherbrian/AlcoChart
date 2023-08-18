@@ -68,30 +68,3 @@ function updateAlcoholCount() {
     dailyAlcoholIntake = (drinkSize * alcoholStrength) + (modifierSize * modifierStrength);
     document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
 }
-
-function loadDesign(design) {
-    console.log('loadDesign called with design:', design);
-    if (design === 'design1') {
-        // Load design1
-        console.log('Loading design1...');
-        var oldScript = document.getElementById('designScript');
-        var oldLink = document.getElementById('designCSS');
-        if (oldScript) oldScript.remove();
-        if (oldLink) oldLink.remove();
-        var script = document.createElement('script');
-        script.src = 'design1/app.js';
-        script.id = 'designScript';
-        script.onload = function() {
-            if (typeof applyDesign1 === 'function') {
-                applyDesign1();
-            }
-        };
-        document.head.appendChild(script);
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'design1/style.css';
-        link.id = 'designCSS';
-        document.head.appendChild(link);
-    }
-    // Add more conditions here for other designs
-}
