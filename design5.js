@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const buttons = document.querySelectorAll('.accordion-btn');
     let totalAlcoholIntake = 0;
     const alcoholTallyEl = document.getElementById('alcoholTally');
+    const customOuncesInput = document.querySelector('.content input[type="number"]:nth-child(1)');
+    const customPercentageInput = document.querySelector('.content input[type="number"]:nth-child(2)');
 
     buttons.forEach(button => {
         button.addEventListener('click', function() {
@@ -37,6 +39,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 grandParentContent.style.display = 'none';
                 parentContent.style.display = 'none';
                 this.style.display = 'none';
+            }
+        });
+    });
+
+    // Add event listeners to the custom drink input fields
+    [customOuncesInput, customPercentageInput].forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const drinkSize = parseFloat(customOuncesInput.value);
+                const alcoholPercentage = parseFloat(customPercentageInput.value);
+
+                totalAlcoholIntake += drinkSize * (alcoholPercentage / 100);
+                alcoholTallyEl.textContent = Math.round(totalAlcoholIntake); // Display as a whole number
+
+                // Show toast notification
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 2000);
+
+                // Clear input fields
+                customOuncesInput.value = '';
+                customPercentageInput.value = '';
             }
         });
     });
