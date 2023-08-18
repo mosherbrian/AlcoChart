@@ -19,6 +19,9 @@ document.getElementById('quickSelections').addEventListener('click', function(ev
 });
 
 function updateScore() {
+    var size = parseInt(sizeDropdown.value);
+    var strength = parseInt(strengthDropdown.value);
+    dailyAlcoholIntake = size * (strength / 100);
     document.getElementById('alcoholCount').textContent = 'Current Alcohol Count: ' + dailyAlcoholIntake;
     showToastNotification();
 }
