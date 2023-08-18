@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alcohol Intake Tracker</title>
+    <style>
+        /* CSS for the accordion structure */
+        .accordion {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .accordion-btn {
+            display: block;
+            width: 100%;
+            border: none;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .content {
+            display: none;
+            background: #f9f9f9;
+            overflow: hidden;
+        }
+
+        /* Styling active buttons with a different background */
+        .accordion-btn.active {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Main accordion structure -->
+<div class="accordion">
+    <!-- Beer section starts here -->
+    <button class="accordion-btn">Beer</button>
+    <div class="content">
+        <button class="accordion-btn">8oz</button>
+        <div class="content">
+            <button class="accordion-btn">4%</button>
+            <button class="accordion-btn">5%</button>
+            <!-- Add other percentages here -->
+        </div>
+        <button class="accordion-btn">10oz</button>
+        <!-- Add other sizes and their nested content here -->
+    </div>
+    <!-- More sections (Wine, Cocktail, Custom) can be added in the same format -->
+</div>
+
+<script>
+    // JavaScript for accordion behavior
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.accordion-btn');
+        
+        // Loop through all accordion buttons
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Toggle active class to show which section/sub-section is active
+                this.classList.toggle('active');
+
+                // Get the next sibling (the content div)
+                const content = this.nextElementSibling;
+
+                // Check if content is displayed, hide it if it is, show it if it isn't
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
