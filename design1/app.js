@@ -5,6 +5,7 @@ var drinkSize = 5;
 var alcoholStrength = 5;
 
 function setBeer(size, strength) {
+    console.log('setBeer called with size:', size, 'and strength:', strength);
     drinkSize = size;
     alcoholStrength = strength;
     updateAlcoholCount();
