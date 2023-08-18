@@ -4,6 +4,45 @@ var score = 0;
 var accordion = document.getElementById('accordion');
 var toastNotification = document.getElementById('toastNotification');
 
+// Hardcoded accordion data
+var accordionData = [
+    {
+        "name": "Drink Type",
+        "options": ["Beer", "Wine", "Cocktail", "Custom"],
+        "info": "Select the type of alcoholic beverage."
+    },
+    {
+        "name": "Size/CocktailType",
+        "options": {
+            "Beer": ["8oz", "10oz", "12oz", "16oz", "20oz"],
+            "Wine": ["4oz", "5oz", "6oz", "9oz"],
+            "Cocktail": ["Old-fashioned", "Manhattan", "Highball", "Sour"],
+            "Custom": ["Ounces slider"]
+        },
+        "info": "Choose the size of your drink or type of cocktail."
+    },
+    {
+        "name": "Alcohol Content",
+        "options": {
+            "8oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
+            "10oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
+            "12oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
+            "16oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
+            "20oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
+            "4oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
+            "5oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
+            "6oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
+            "9oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
+            "Old-fashioned": ["40%", "45%", "50%", "55%"],
+            "Manhattan": ["40%", "45%", "50%", "55%"],
+            "Highball": ["40%", "45%", "50%", "55%"],
+            "Sour": ["40%", "45%", "50%", "55%"],
+            "Ounces slider": ["% slider"]
+        },
+        "info": "Select the alcohol content percentage."
+    }
+];
+
 // Function to create the accordion structure
 function createAccordion(data) {
     data.forEach(function(level) {
