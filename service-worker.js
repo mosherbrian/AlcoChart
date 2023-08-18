@@ -3,10 +3,10 @@ self.addEventListener('install', function(event) {
         caches.open('alcochart-cache').then(function(cache) {
             return cache.addAll([
                 '/',
-                '/index.html',
-                '/app.js',
-                '/style.css',
-                '/icon.png'
+                'index.html',
+                'app.js',
+                'style.css',
+                'icon.png'
             ]);
         })
     );
