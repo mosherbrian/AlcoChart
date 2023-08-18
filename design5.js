@@ -56,24 +56,26 @@ function createAccordion(data, parentElement) {
         optionsElement.style.display = 'none'; // Hide the options initially
         levelElement.appendChild(optionsElement);
 
-        if (optionsElement !== undefined) {
-            if (Array.isArray(level.options)) {
-                level.options.forEach(function(option) {
-                    var optionElement = document.createElement('div');
-                    optionElement.textContent = option;
-                    optionElement.classList.add('accordion-option');
+        if (Array.isArray(level.options)) {
+            level.options.forEach(function(option) {
+                var optionElement = document.createElement('div');
+                optionElement.textContent = option;
+                optionElement.classList.add('accordion-option');
+                if (optionsElement !== undefined) {
                     optionsElement.appendChild(optionElement);
-                });
-            } else if (level.options !== null && level.options !== undefined) {
-                Object.keys(level.options).forEach(function(key) {
-                    var optionElement = document.createElement('div');
-                    optionElement.textContent = key;
-                    optionElement.classList.add('accordion-option');
+                }
+            });
+        } else if (level.options !== null && level.options !== undefined) {
+            Object.keys(level.options).forEach(function(key) {
+                var optionElement = document.createElement('div');
+                optionElement.textContent = key;
+                optionElement.classList.add('accordion-option');
+                if (optionsElement !== undefined) {
                     optionsElement.appendChild(optionElement);
+                }
 
-                    createAccordion(level.options[key], optionElement);
-                });
-            }
+                createAccordion(level.options[key], optionElement);
+            });
         }
 
         // Add a click event listener to the level
