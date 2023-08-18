@@ -50,15 +50,15 @@ function createAccordion(data, parentElement) {
         return;
     }
     data[0].options.forEach(function(option) {
-        var levelElement = document.createElement('div');
-        levelElement.textContent = option;
-        levelElement.classList.add('accordion-level');
-        parentElement.appendChild(levelElement);
+        var levelButton = document.createElement('button');
+        levelButton.textContent = option;
+        levelButton.classList.add('accordion-btn');
+        parentElement.appendChild(levelButton);
 
-        var optionsElement = document.createElement('div');
-        optionsElement.classList.add('accordion-options');
-        optionsElement.style.display = 'none'; // Hide the options initially
-        levelElement.appendChild(optionsElement);
+        var optionsDiv = document.createElement('div');
+        optionsDiv.classList.add('content');
+        optionsDiv.style.display = 'none'; // Hide the options initially
+        levelButton.appendChild(optionsDiv);
 
         if (Array.isArray(level.options)) {
             level.options.forEach(function(option) {
