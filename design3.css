@@ -21,6 +21,8 @@ body {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
+    -webkit-appearance: picker-view;
+    appearance: picker-view;    
 }
 
 #dials select {
