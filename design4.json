@@ -1,0 +1,46 @@
+{
+  "Header": {
+    "title": {
+      "text": "Alcohol Intake Tracker",
+      "color": "blue",
+      "fontSize": "24px",
+      "position": "centered",
+      "description": "Blue, centered title at the top."
+    },
+    "score": {
+      "value": 50,
+      "description": "Numeric score representing the user's alcohol intake."
+    }
+  },
+
+  "CardGroup": {
+    "cards": [
+      {
+        "title": "Beer",
+        "subtitle": "12oz, 4%",
+        "description": "Card for a specific drink type. Clickable and updates the score on selection."
+      },
+      {
+        "title": "Wine",
+        "subtitle": "5oz, 12%"
+      }
+    ],
+    "description": "Cards with drink details, each card being a one-tap option to add that drink."
+  },
+
+  "CustomButton": {
+    "text": "+ Add Custom Drink",
+    "description": "Button to navigate to a different screen or modal where users can input custom drinks."
+  },
+
+  "feedbackMechanism": {
+    "successNotification": {
+      "text": "Custom Drink Added!",
+      "color": "green",
+      "displayDuration": "3 seconds",
+      "description": "Notification when a custom drink is added."
+    }
+  },
+
+  "useCaseScenario": "Sophie selects the 'Wine' card and then adds a custom drink using the button. Both actions update her score."
+}
