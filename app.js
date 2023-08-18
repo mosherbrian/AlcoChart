@@ -70,8 +70,10 @@ function updateAlcoholCount() {
 }
 
 function loadDesign(design) {
+    console.log('loadDesign called with design:', design);
     if (design === 'design1') {
         // Load design1
+        console.log('Loading design1...');
         var script = document.createElement('script');
         script.src = 'design1/app.js';
         document.head.appendChild(script);
