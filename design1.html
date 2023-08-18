@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AlcoChart Design 1</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Alcohol Intake Tracker</title>
+    <link rel="stylesheet" type="text/css" href="design1.css">
 </head>
 <body>
-    <!-- The elements will be populated with JavaScript -->
-    <header id="header"></header>
-    <div id="buttonGroup"></div>
-    <div id="listView"></div>
+    <header id="header">
+        <h1 style="color: blue; text-align: center; font-size: 24px;">Alcohol Intake Tracker</h1>
+        <p id="score">Current Alcohol Count: 0</p>
+    </header>
+    <div id="buttonGroup">
+        <button id="beerButton">Beer</button>
+        <button id="wineButton">Wine</button>
+        <button id="cocktailButton">Cocktail</button>
+    </div>
+    <div id="listView">
+        <!-- The list items will be populated with JavaScript -->
+    </div>
+    <div id="toastNotification" style="display: none;">Drink added successfully!</div>
     <script src="design1.js"></script>
 </body>
 </html>
