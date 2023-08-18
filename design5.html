@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alcohol Intake Tracker</title>
-    <link rel="stylesheet" href="design5.css">
+    <link rel="stylesheet" type="text/css" href="design5.css">
 </head>
 <body>
 
@@ -15,12 +15,156 @@
 
 <div class="accordion">
     <!-- Beer Section -->
-    <!-- ... -->
+    <button class="accordion-btn">Beer</button>
+    <div class="content">
+        <button class="accordion-btn">8oz</button>
+        <div class="content">
+            <button class="accordion-btn">4%</button>
+            <button class="accordion-btn">5%</button>
+            <button class="accordion-btn">6%</button>
+            <button class="accordion-btn">7%</button>
+            <button class="accordion-btn">8%</button>
+            <button class="accordion-btn">9%</button>
+            <button class="accordion-btn">10%</button>
+        </div>
+
+        <button class="accordion-btn">10oz</button>
+        <div class="content">
+            <button class="accordion-btn">4%</button>
+            <button class="accordion-btn">5%</button>
+            <button class="accordion-btn">6%</button>
+            <button class="accordion-btn">7%</button>
+            <button class="accordion-btn">8%</button>
+            <button class="accordion-btn">9%</button>
+            <button class="accordion-btn">10%</button>
+        </div>
+
+        <!-- 12oz Beer Sizes with Percentages -->
+        <button class="accordion-btn">12oz</button>
+        <div class="content">
+            <button class="accordion-btn">4%</button>
+            <button class="accordion-btn">5%</button>
+            <button class="accordion-btn">6%</button>
+            <button class="accordion-btn">7%</button>
+            <button class="accordion-btn">8%</button>
+            <button class="accordion-btn">9%</button>
+            <button class="accordion-btn">10%</button>
+        </div>
+
+        <!-- 16oz Beer Sizes with Percentages -->
+        <button class="accordion-btn">16oz</button>
+        <div class="content">
+            <button class="accordion-btn">4%</button>
+            <button class="accordion-btn">5%</button>
+            <button class="accordion-btn">6%</button>
+            <button class="accordion-btn">7%</button>
+            <button class="accordion-btn">8%</button>
+            <button class="accordion-btn">9%</button>
+            <button class="accordion-btn">10%</button>
+        </div>
+
+        <!-- 20oz Beer Sizes with Percentages -->
+        <button class="accordion-btn">20oz</button>
+        <div class="content">
+            <button class="accordion-btn">4%</button>
+            <button class="accordion-btn">5%</button>
+            <button class="accordion-btn">6%</button>
+            <button class="accordion-btn">7%</button>
+            <button class="accordion-btn">8%</button>
+            <button class="accordion-btn">9%</button>
+            <button class="accordion-btn">10%</button>
+        </div>
+    </div>
+
+    <!-- Wine Section -->
+    <button class="accordion-btn">Wine</button>
+    <div class="content">
+        <button class="accordion-btn">4oz</button>
+        <div class="content">
+            <button class="accordion-btn">10%</button>
+            <button class="accordion-btn">11%</button>
+            <button class="accordion-btn">12%</button>
+            <button class="accordion-btn">13%</button>
+            <button class="accordion-btn">14%</button>
+            <button class="accordion-btn">20%</button>
+        </div>
+
+        <button class="accordion-btn">5oz</button>
+        <div class="content">
+            <button class="accordion-btn">10%</button>
+            <button class="accordion-btn">11%</button>
+            <button class="accordion-btn">12%</button>
+            <button class="accordion-btn">13%</button>
+            <button class="accordion-btn">14%</button>
+            <button class="accordion-btn">20%</button>
+        </div>
+
+        <button class="accordion-btn">6oz</button>
+        <div class="content">
+            <button class="accordion-btn">10%</button>
+            <button class="accordion-btn">11%</button>
+            <button class="accordion-btn">12%</button>
+            <button class="accordion-btn">13%</button>
+            <button class="accordion-btn">14%</button>
+            <button class="accordion-btn">20%</button>
+        </div>
+
+        <button class="accordion-btn">9oz</button>
+        <div class="content">
+            <button class="accordion-btn">10%</button>
+            <button class="accordion-btn">11%</button>
+            <button class="accordion-btn">12%</button>
+            <button class="accordion-btn">13%</button>
+            <button class="accordion-btn">14%</button>
+            <button class="accordion-btn">20%</button>
+        </div>
+
+    </div>
+
+    <!-- Cocktail Section -->
+    <button class="accordion-btn">Cocktail</button>
+    <div class="content">
+        <button class="accordion-btn">Old-fashioned</button>
+        <div class="content">
+            <button class="accordion-btn">40%</button>
+            <button class="accordion-btn">45%</button>
+            <button class="accordion-btn">50%</button>
+            <button class="accordion-btn">55%</button>
+        </div>
+
+        <button class="accordion-btn">Manhattan</button>
+        <div class="content">
+            <button class="accordion-btn">40%</button>
+            <button class="accordion-btn">45%</button>
+            <button class="accordion-btn">50%</button>
+            <button class="accordion-btn">55%</button>
+        </div>
+
+        <button class="accordion-btn">Highball</button>
+        <div class="content">
+            <button class="accordion-btn">40%</button>
+            <button class="accordion-btn">45%</button>
+            <button class="accordion-btn">50%</button>
+            <button class="accordion-btn">55%</button>
+        </div>
+
+        <button class="accordion-btn">Sour</button>
+        <div class="content">
+            <button class="accordion-btn">40%</button>
+            <button class="accordion-btn">45%</button>
+            <button class="accordion-btn">50%</button>
+            <button class="accordion-btn">55%</button>
+        </div>
+    </div>
+
     <!-- Custom Section -->
-    <!-- ... -->
+    <button class="accordion-btn">Custom</button>
+    <div class="content">
+        <p>Ounces: <input type="number" min="0" step="0.1" placeholder="Enter ounces"></p>
+        <p>Alcohol %: <input type="number" min="0" max="100" step="0.1" placeholder="Enter alcohol %"></p>
+    </div>
 </div>
 
 <script src="design5.js"></script>
-
 </body>
 </html>

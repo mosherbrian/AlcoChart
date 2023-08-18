@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function() {
     const buttons = document.querySelectorAll('.accordion-btn');
     let totalAlcoholIntake = 0;
