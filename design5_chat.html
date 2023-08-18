@@ -34,6 +34,11 @@
 </head>
 <body>
 
+<!-- Display Area for Alcohol Tally -->
+<div style="text-align: center; margin: 20px; padding: 10px; border: 1px solid #ddd; background-color: #f4f4f4;">
+    Total Alcohol Intake for Today: <span id="alcoholTally">0</span> units
+</div>
+
 <div class="accordion">
     <!-- Beer Section -->
     <button class="accordion-btn">Beer</button>
@@ -189,7 +194,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const buttons = document.querySelectorAll('.accordion-btn');
-        
+        let totalAlcoholIntake = 0;
+        const alcoholTallyEl = document.getElementById('alcoholTally');
+
         buttons.forEach(button => {
             button.addEventListener('click', function() {
                 this.classList.toggle('active');
@@ -198,6 +205,18 @@
                     content.style.display = "none";
                 } else {
                     content.style.display = "block";
+                }
+
+                // Check if the clicked button is a final selection (Alcohol Percentage)
+                if (content && content.style.display !== "block") {
+                    const parentContent = this.parentElement;
+                    const grandParentContent = parentContent.parentElement;
+
+                    const drinkSize = parseFloat(parentContent.previousElementSibling.textContent.replace('oz', ''));
+                    const alcoholPercentage = parseFloat(this.textContent.replace('%', '')) / 100;
+
+                    totalAlcoholIntake += drinkSize * alcoholPercentage;
+                    alcoholTallyEl.textContent = totalAlcoholIntake.toFixed(2); // Display with 2 decimal places
                 }
             });
         });
