@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const buttons = document.querySelectorAll('.accordion-btn');
     let totalAlcoholIntake = 0;
-    const alcoholTallyEl = document.getElementById('scoreDisplay');
+    const alcoholTallyEl = document.getElementById('alcoholTally');
 
     buttons.forEach(button => {
         button.addEventListener('click', function() {
