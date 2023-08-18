@@ -70,5 +70,15 @@ function updateAlcoholCount() {
 }
 
 function loadDesign(design) {
-    // Add your code here to load the design
+    if (design === 'design1') {
+        // Load design1
+        var script = document.createElement('script');
+        script.src = 'design1/app.js';
+        document.head.appendChild(script);
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'design1/style.css';
+        document.head.appendChild(link);
+    }
+    // Add more conditions here for other designs
 }
