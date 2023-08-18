@@ -4,8 +4,12 @@ var score = 0;
 var accordion = document.getElementById('accordion');
 var toastNotification = document.getElementById('toastNotification');
 
-// Load the accordion data from the JSON file
-var accordionData = JSON.parse(document.getElementById('accordionData').textContent);
+try {
+    // Load the accordion data from the JSON file
+    var accordionData = JSON.parse(document.getElementById('accordionData').textContent);
+} catch (error) {
+    console.error("Error parsing JSON data: ", error);
+}
 
 // Function to create the accordion structure
 function createAccordion(data) {
