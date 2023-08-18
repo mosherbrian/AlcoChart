@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const alcoholPercentage = parseFloat(this.textContent.replace('%', ''));
 
                 totalAlcoholIntake += drinkSize * alcoholPercentage;
-                alcoholTallyEl.textContent = totalAlcoholIntake.toFixed(2); // Display with 2 decimal places
+                alcoholTallyEl.textContent = Math.round(totalAlcoholIntake); // Display as a whole number
             }
         });
     });
