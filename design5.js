@@ -1,122 +1,32 @@
-// Your JavaScript code will go here
-var score = 0;
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.accordion-btn');
+    let totalAlcoholIntake = 0;
+    const alcoholTallyEl = document.getElementById('scoreDisplay');
 
-var accordion = document.getElementById('accordion');
-var toastNotification = document.getElementById('toastNotification');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const content = this.nextElementSibling;
+            this.classList.toggle('active');
 
-// Hardcoded accordion data
-var accordionData = [
-    {
-        "name": "Drink Type",
-        "options": ["Beer", "Wine", "Cocktail", "Custom"],
-        "info": "Select the type of alcoholic beverage."
-    },
-    {
-        "name": "Size/CocktailType",
-        "options": {
-            "Beer": ["8oz", "10oz", "12oz", "16oz", "20oz"],
-            "Wine": ["4oz", "5oz", "6oz", "9oz"],
-            "Cocktail": ["Old-fashioned", "Manhattan", "Highball", "Sour"],
-            "Custom": ["Ounces slider"]
-        },
-        "info": "Choose the size of your drink or type of cocktail."
-    },
-    {
-        "name": "Alcohol Content",
-        "options": {
-            "8oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
-            "10oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
-            "12oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
-            "16oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
-            "20oz": ["4%", "5%", "6%", "7%", "8%", "9%", "10%"],
-            "4oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
-            "5oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
-            "6oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
-            "9oz": ["10%", "11%", "12%", "13%", "14%", "20%"],
-            "Old-fashioned": ["40%", "45%", "50%", "55%"],
-            "Manhattan": ["40%", "45%", "50%", "55%"],
-            "Highball": ["40%", "45%", "50%", "55%"],
-            "Sour": ["40%", "45%", "50%", "55%"],
-            "Ounces slider": ["% slider"]
-        },
-        "info": "Select the alcohol content percentage."
-    }
-];
-
-// Function to create the accordion structure
-function createAccordion(data, parentElement) {
-    if (!Array.isArray(data)) {
-        console.error('Invalid data supplied to createAccordion: ', data);
-        return;
-    }
-    data[0].options.forEach(function(option) {
-        var levelButton = document.createElement('button');
-        levelButton.textContent = option;
-        levelButton.classList.add('accordion-btn');
-        parentElement.appendChild(levelButton);
-
-        var optionsDiv = document.createElement('div');
-        optionsDiv.classList.add('content');
-        optionsDiv.style.display = 'none'; // Hide the options initially
-        levelButton.appendChild(optionsDiv);
-
-        if (Array.isArray(level.options)) {
-            level.options.forEach(function(option) {
-                if (optionsElement) {
-                    var optionElement = document.createElement('div');
-                    optionElement.textContent = option;
-                    optionElement.classList.add('accordion-option');
-                    optionsElement.appendChild(optionElement);
+            if (content) {
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
                 }
-            });
-        } else if (level.options !== null && level.options !== undefined) {
-            Object.keys(level.options).forEach(function(key) {
-                var optionElement = document.createElement('div');
-                optionElement.textContent = key;
-                optionElement.classList.add('accordion-option');
-                if (optionsElement) {
-                    optionsElement.appendChild(optionElement);
-                }
+            }
 
-                createAccordion(level.options[key], optionElement);
-            });
-        }
+            // Check if the clicked button is a final selection (Alcohol Percentage)
+            if (this.nextElementSibling && this.nextElementSibling.tagName !== "DIV") {
+                const parentContent = this.parentElement;
+                const grandParentContent = parentContent.parentElement;
 
-        // Add a click event listener to the level
-        levelElement.addEventListener('click', function(event) {
-            event.stopPropagation();
+                const drinkSize = parseFloat(parentContent.previousElementSibling.textContent.replace('oz', ''));
+                const alcoholPercentage = parseFloat(this.textContent.replace('%', ''));
 
-            // Toggle the display of the options
-            optionsElement.style.display = optionsElement.style.display === 'none' ? 'block' : 'none';
-
-            // Hide all other levels that are not ancestors or descendants of the clicked level
-            var otherLevels = document.querySelectorAll('.accordion-level');
-            otherLevels.forEach(function(otherLevel) {
-                if (!levelElement.contains(otherLevel) && !otherLevel.contains(levelElement)) {
-                    var otherOptions = otherLevel.querySelector('.accordion-options');
-                    if (otherOptions) {
-                        otherOptions.style.display = 'none';
-                    }
-                }
-            });
+                totalAlcoholIntake += drinkSize * alcoholPercentage;
+                alcoholTallyEl.textContent = totalAlcoholIntake.toFixed(2); // Display with 2 decimal places
+            }
         });
     });
-}
-
-// Call the function to create the accordion when the page loads
-createAccordion(accordionData, accordion);
-
-// Call the function to create the accordion when the page loads
-createAccordion(accordionData);
-
-function updateScore(value) {
-    score += value;
-    document.getElementById('scoreDisplay').textContent = 'Current Score: ' + score;
-}
-
-function showToastNotification() {
-    toastNotification.style.display = 'block';
-    setTimeout(function() {
-        toastNotification.style.display = 'none';
-    }, 3000);
-}
+});

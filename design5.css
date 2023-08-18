@@ -16,10 +16,30 @@ body {
     font-size: 24px;
 }
 
-#accordion {
+.accordion {
     width: 100%;
-    height: 100%;
-    margin-bottom: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.accordion-btn {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 10px;
+    text-align: left;
+    cursor: pointer;
+    background-color: #eee;
+}
+
+.content {
+    display: none;
+    background: #f9f9f9;
+    overflow: hidden;
+}
+
+.accordion-btn.active {
+    background-color: #ddd;
 }
 
 #toastNotification {
