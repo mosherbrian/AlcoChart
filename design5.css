@@ -54,3 +54,17 @@
     border: 1px solid #ddd; 
     background-color: #f4f4f4;
 }
+@media only screen and (max-width: 600px) {
+    .container {
+        width: 100%;
+    }
+
+    .accordion {
+        width: 100%;
+    }
+
+    .tally-display {
+        width: 100%;
+        font-size: 2em;
+    }
+}
