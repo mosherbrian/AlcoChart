@@ -44,16 +44,18 @@ var accordionData = [
 ];
 
 // Function to create the accordion structure
-function createAccordion(data) {
+function createAccordion(data, parentElement) {
     data.forEach(function(level) {
         var levelElement = document.createElement('div');
         levelElement.textContent = level.name;
         levelElement.classList.add('accordion-level');
-        accordion.appendChild(levelElement);
+        parentElement.appendChild(levelElement);
 
         var optionsElement = document.createElement('div');
         optionsElement.classList.add('accordion-options');
         optionsElement.style.display = 'none'; // Hide the options initially
+        levelElement.appendChild(optionsElement);
+
         if (Array.isArray(level.options)) {
             level.options.forEach(function(option) {
                 var optionElement = document.createElement('div');
@@ -67,17 +69,34 @@ function createAccordion(data) {
                 optionElement.textContent = key;
                 optionElement.classList.add('accordion-option');
                 optionsElement.appendChild(optionElement);
+
+                createAccordion(level.options[key], optionElement);
             });
         }
-        accordion.appendChild(optionsElement);
 
         // Add a click event listener to the level
-        levelElement.addEventListener('click', function() {
+        levelElement.addEventListener('click', function(event) {
+            event.stopPropagation();
+
             // Toggle the display of the options
             optionsElement.style.display = optionsElement.style.display === 'none' ? 'block' : 'none';
+
+            // Hide all other levels that are not ancestors or descendants of the clicked level
+            var otherLevels = document.querySelectorAll('.accordion-level');
+            otherLevels.forEach(function(otherLevel) {
+                if (!levelElement.contains(otherLevel) && !otherLevel.contains(levelElement)) {
+                    var otherOptions = otherLevel.querySelector('.accordion-options');
+                    if (otherOptions) {
+                        otherOptions.style.display = 'none';
+                    }
+                }
+            });
         });
     });
 }
+
+// Call the function to create the accordion when the page loads
+createAccordion(accordionData, accordion);
 
 // Call the function to create the accordion when the page loads
 createAccordion(accordionData);
