@@ -1,3 +1,4 @@
+console.log('design1/app.js loaded');
 // Updated app.js file for Design #1
 var dailyAlcoholIntake = 0;
 
