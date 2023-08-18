@@ -5,8 +5,12 @@ var accordion = document.getElementById('accordion');
 var toastNotification = document.getElementById('toastNotification');
 
 try {
-    // Load the accordion data from the JSON file
-    var accordionData = JSON.parse(document.getElementById('accordionData').textContent);
+    try {
+        // Load the accordion data from the JSON file
+        var accordionData = JSON.parse(document.getElementById('accordionData').textContent);
+    } catch (error) {
+        console.error("Error parsing JSON data: ", error);
+    }
 } catch (error) {
     console.error("Error parsing JSON data: ", error);
 }
