@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alcohol Intake Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            max-width: 500px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+        }
+        .quick-add-buttons button {
+            padding: 10px;
+            margin: 5px;
+        }
+        .drinks-list {
+            overflow-y: auto;
+            height: 250px; /* Adjust this for your needs */
+            border: 1px solid #ccc;
+        }
+        .drink {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Date Picker -->
+    <input type="date">
+
+    <!-- Slider and Tally -->
+    <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+        <div>
+            <input type="radio" id="add" name="operation" value="add" checked>
+            <label for="add">+</label>
+            <input type="radio" id="subtract" name="operation" value="subtract">
+            <label for="subtract">-</label>
+          </div>
+          <span id="tally">160</span>
+    </div>
+
+    <!-- Quick-Add Buttons -->
+    <div class="quick-add-buttons">
+        <button onclick="addToTally(5)">5</button>
+        <button onclick="addToTally(10)">10</button>
+        <button onclick="addToTally(20)">20</button>
+        <button onclick="addToTally(60)">60</button>
+        <button onclick="addToTally(80)">80</button>
+    </div>
+
+    <!-- Scrolling List of Drinks -->
+    <div class="drinks-list" id="drinkList"></div>
+</div>
+
+<script>
+    const tallyDisplay = document.getElementById('tally');
+    const drinkList = document.getElementById('drinkList');
+    let totalAlcoholUnits = 0;
+
+    function addToTally(alcoholContent) {
+        let operation = document.querySelector('input[name="operation"]:checked').value;
+        
+        if (operation === "add") {
+            totalAlcoholUnits += alcoholContent;
+        } else {
+            totalAlcoholUnits -= alcoholContent;
+            // Ensure total never goes negative:
+            totalAlcoholUnits = Math.max(0, totalAlcoholUnits);
+        }
+
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        tallyDisplay.innerText = totalAlcoholUnits.toString();
+    }
+
+    // Initial display
+    updateDisplay();
+
+    // Sample data for drinks. In a real application, this would be fetched from a database or API.
+    const drinks = [
+        {name: 'Beer - 12 oz - 4%', value: 48},
+        {name: 'Beer - 12 oz - 5%', value: 60},
+        {name: 'Beer - 12 oz - 6%', value: 72},
+        {name: 'Beer - 12 oz - 7%', value: 84},
+        {name: 'Beer - 16 oz - 4%', value: 64},
+        {name: 'Beer - 16 oz - 5%', value: 80},
+        {name: 'Beer - 16 oz - 6%', value: 96},
+        {name: 'Beer - 16 oz - 7%', value: 112},
+        {name: 'Wine - 5 oz - 11%', value: 55},
+        {name: 'Wine - 5 oz - 12%', value: 60},
+        {name: 'Wine - 5 oz - 13%', value: 65},
+        {name: 'Highball', value: 80},
+        {name: 'Sour', value: 80},
+        {name: 'Negroni', value: 80},
+        {name: 'Old-Fashioned', value: 90},
+        {name: 'Manhattan', value: 110}
+    ];
+
+    // Populate the drink list
+    drinks.forEach(drink => {
+        const drinkElem = document.createElement('div');
+        drinkElem.className = 'drink';
+        drinkElem.innerHTML = `${drink.name} <span>(${drink.value})</span>`;
+        drinkElem.addEventListener('click', () => addToTally(drink.value));
+        drinkList.appendChild(drinkElem);
+    });
+</script>
+
+</body>
+</html>
