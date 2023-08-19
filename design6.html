@@ -183,6 +183,16 @@
     const drinkList = document.getElementById('drinkList');
     let totalAlcoholUnits = 0;
 
+    // Key format: 'totalAlcoholUnits-YYYY-MM-DD'
+    let today = new Date().toISOString().split('T')[0];  // Gets current date in 'YYYY-MM-DD' format
+    let selectedDate = today;
+   
+    document.querySelector('input[type="date"]').addEventListener('change', function(event) {
+        selectedDate = event.target.value;
+        updateDisplay();
+    });
+    document.querySelector('input[type="date"]').value = today;
+
     function addToTally(alcoholContent) {
         let toggle = document.getElementById('toggle');
         
@@ -193,6 +203,8 @@
             totalAlcoholUnits = Math.max(0, totalAlcoholUnits); // Ensure tally doesn't go negative
         }
  
+        // Save to localStorage with date-specific key
+        localStorage.setItem('totalAlcoholUnits-' + selectedDate, totalAlcoholUnits);
         updateDisplay();
 
         let operationMsg = toggle.checked ? "Added" : "Subtracted";
@@ -200,6 +212,7 @@
     }
 
     function updateDisplay() {
+        totalAlcoholUnits = parseInt(localStorage.getItem('totalAlcoholUnits-' + selectedDate)) || 0;
         tallyDisplay.innerText = totalAlcoholUnits.toString();
     }
 
