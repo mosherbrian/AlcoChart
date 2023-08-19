@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Alcohol Intake Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            font-size: 20px;  
         }
         .container {
-            width: 80%;
-            max-width: 500px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+            width: 100%;      // Take up the full width
+            max-width: none;  // Remove any max width
+            margin: 0 auto;   // Centering (if needed)
+            padding: 5% 5%;   // Add padding to avoid content sticking to the edges
         }
         .quick-add-buttons button {
-            padding: 10px;
-            margin: 5px;
+            padding: 15px 20px;  // Increase the padding
+            font-size: 18px;    // Increase the font size for clarity
         }
+        
         .drinks-list {
             overflow-y: auto;
-            height: 250px; /* Adjust this for your needs */
+            height: 75vh; /* Adjust this for your needs */
             border: 1px solid #ccc;
         }
         .drink {
