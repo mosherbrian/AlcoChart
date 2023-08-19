@@ -51,6 +51,53 @@
             transition: opacity 0.3s, bottom 0.3s;
             z-index: 1000;
         }
+        .toggle-container {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 30px;
+            transition: 0.4s;
+        }
+
+        .toggle-switch:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        input[type="checkbox"]:checked + .toggle-switch {
+            background-color: #2196F3;
+        }
+
+        input[type="checkbox"]:checked + .toggle-switch:before {
+            transform: translateX(30px);
+        }
+
+        .toggle-labels {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .toggle-labels span {
+            cursor: pointer;
+        }
 
         /* Responsiveness */
         @media only screen and (max-width: 480px) {
@@ -77,13 +124,11 @@
 
     <!-- Slider and Tally -->
     <div style="display: flex; justify-content: space-between; margin: 10px 0;">
-        <div>
-            <input type="radio" id="add" name="operation" value="add" checked>
-            <label for="add">+</label>
-            <input type="radio" id="subtract" name="operation" value="subtract">
-            <label for="subtract">-</label>
-          </div>
-          <span id="tally">160</span>
+        <div class="toggle-container">
+            <input type="checkbox" id="toggle" checked>
+            <label for="toggle" class="toggle-switch">+/-</label>
+        </div>
+        <span id="tally">0</span>
     </div>
 
     <!-- Quick-Add Buttons -->
@@ -106,19 +151,18 @@
     let totalAlcoholUnits = 0;
 
     function addToTally(alcoholContent) {
-        let operation = document.querySelector('input[name="operation"]:checked').value;
+        let toggle = document.getElementById('toggle');
         
-        if (operation === "add") {
+        if (toggle.checked) { // Add
             totalAlcoholUnits += alcoholContent;
-        } else {
+        } else { // Subtract
             totalAlcoholUnits -= alcoholContent;
-            // Ensure total never goes negative:
-            totalAlcoholUnits = Math.max(0, totalAlcoholUnits);
+            totalAlcoholUnits = Math.max(0, totalAlcoholUnits); // Ensure tally doesn't go negative
         }
-
+ 
         updateDisplay();
 
-        let operationMsg = operation === "add" ? "Added" : "Subtracted";
+        let operationMsg = toggle.checked ? "Added" : "Subtracted";
         showToast(`${operationMsg} ${alcoholContent} units`);
     }
 
