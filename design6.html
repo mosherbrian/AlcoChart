@@ -43,7 +43,11 @@
             padding: 0;
             margin: 0;
         }
-
+        .day_btn {
+            font-size: 1.5em;
+            font-weight: bolder;
+        }
+        
         /* Adjust the margin for the first and last buttons */
         .quick-add-buttons button:first-child {
             margin-left: 0;
@@ -153,9 +157,9 @@
 
 <div class="container">
     <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
-        <button onclick="changeDate(-1)">Previous Day</button>
+        <button class="day_btn" onclick="changeDate(-1)">‹</button>
         <input type="date" id="datePicker" style="font-size: 1.5em; margin: 0 10px;" onchange="loadDateTally()">
-        <button onclick="changeDate(1)">Next Day</button>
+        <button class="day_btn" onclick="changeDate(1)">›</button>
     </div>
     
     <!-- Slider and Tally -->
