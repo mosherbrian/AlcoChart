@@ -152,9 +152,12 @@
 <body>
 
 <div class="container">
-    <!-- Date Picker -->
-    <input type="date">
-
+    <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
+        <button onclick="changeDate(-1)">Previous Day</button>
+        <input type="date" id="datePicker" style="font-size: 1.5em; margin: 0 10px;" onchange="loadDateTally()">
+        <button onclick="changeDate(1)">Next Day</button>
+    </div>
+    
     <!-- Slider and Tally -->
     <div style="display: flex; justify-content: space-between; margin: 10px 0;">
         <div class="toggle-container">
@@ -186,13 +189,34 @@
     // Key format: 'totalAlcoholUnits-YYYY-MM-DD'
     let today = new Date().toISOString().split('T')[0];  // Gets current date in 'YYYY-MM-DD' format
     let selectedDate = today;
-   
-    document.querySelector('input[type="date"]').addEventListener('change', function(event) {
-        selectedDate = event.target.value;
-        updateDisplay();
-    });
-    document.querySelector('input[type="date"]').value = today;
 
+    const datePicker = document.getElementById('datePicker');
+
+    function changeDate(delta) {
+        const currentDate = new Date(selectedDate);
+        currentDate.setDate(currentDate.getDate() + delta);
+        selectedDate = currentDate.toISOString().split('T')[0];
+        datePicker.value = selectedDate;
+        loadDateTally();
+    }
+
+    function loadDateTally() {
+        totalAlcoholUnits = parseInt(localStorage.getItem(selectedDate) || "0", 10);
+        updateDisplay();
+    }
+
+    // Listen for date picker changes
+    datePicker.addEventListener('change', () => {
+        selectedDate = datePicker.value;
+        loadDateTally();
+    });
+
+    // On page load
+    document.addEventListener('DOMContentLoaded', (event) => {
+        datePicker.value = selectedDate;
+        loadDateTally();
+    });
+    
     function addToTally(alcoholContent) {
         let toggle = document.getElementById('toggle');
         
@@ -215,9 +239,6 @@
         totalAlcoholUnits = parseInt(localStorage.getItem('totalAlcoholUnits-' + selectedDate)) || 0;
         tallyDisplay.innerText = totalAlcoholUnits.toString();
     }
-
-    // Initial display
-    updateDisplay();
 
     // Sample data for drinks. In a real application, this would be fetched from a database or API.
     const drinks = [
