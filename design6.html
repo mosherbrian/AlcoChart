@@ -32,6 +32,41 @@
             border-bottom: 1px solid #ddd;
             cursor: pointer;
         }
+        /* Transition effects */
+        .drink, .quick-add-buttons button {
+            transition: background-color 0.3s;
+        }
+
+        /* Toast/Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+            z-index: 1000;
+        }
+
+        /* Responsiveness */
+        @media only screen and (max-width: 480px) {
+            body {
+                font-size: 18px; /* Larger font for mobile */
+            }
+
+            .quick-add-buttons button {
+                padding: 15px;
+                margin: 10px;
+            }
+
+            .drink {
+                padding: 15px;
+            }
+        }        
     </style>
 </head>
 <body>
@@ -63,6 +98,7 @@
     <!-- Scrolling List of Drinks -->
     <div class="drinks-list" id="drinkList"></div>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
     const tallyDisplay = document.getElementById('tally');
@@ -81,6 +117,9 @@
         }
 
         updateDisplay();
+
+        let operationMsg = operation === "add" ? "Added" : "Subtracted";
+        showToast(`${operationMsg} ${alcoholContent} units`);
     }
 
     function updateDisplay() {
@@ -115,9 +154,30 @@
         const drinkElem = document.createElement('div');
         drinkElem.className = 'drink';
         drinkElem.innerHTML = `${drink.name} <span>(${drink.value})</span>`;
-        drinkElem.addEventListener('click', () => addToTally(drink.value));
+        drinkElem.addEventListener('click', () => {
+            addToTally(drink.value);
+            drinkElem.style.backgroundColor = '#f0f0f0'; // color feedback
+            setTimeout(() => {
+            drinkElem.style.backgroundColor = ''; // reset color after a delay
+            }, 300);
+        });
+
         drinkList.appendChild(drinkElem);
     });
+
+    const toast = document.getElementById('toast');
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.style.opacity = '1';
+        toast.style.bottom = '50px';
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.bottom = '20px';
+        }, 2000);
+    }
+
 </script>
 
 </body>
