@@ -10,6 +10,11 @@
             font-family: Arial, sans-serif;
             font-size: 20px;  
         }
+
+        .tally_count {
+            font-size:larger;
+            font-weight: bolder;
+        }
         .container {
             width: 100%;      // Take up the full width
             max-width: none;  // Remove any max width
@@ -21,18 +26,23 @@
             justify-content: space-between;
             flex-wrap: nowrap;  /* Prevent wrapping onto the next line */
         }
-
         .quick-add-buttons button {
-            flex: 1;  /* Make each button grow equally to fill space */
+            flex: 1;  /* Makes each button grow equally */
             text-align: center;  /* Center the button text */
             height: 80px;  /* Increase this value to adjust the height */
             line-height: 80px;  /* To vertically center text inside the button */
-            font-size: larger
+            font-size: larger;
             margin: 0;
-            padding: 0;
-            border: 0.5;
+            border:thin 1px;  
+            box-sizing: border-box;  /* Ensures padding and border are included in width/height */
         }
 
+        /* This ensures no additional styles are being applied to the buttons on mobile */
+        button::-moz-focus-inner {
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
 
         /* Adjust the margin for the first and last buttons */
         .quick-add-buttons button:first-child {
@@ -151,7 +161,7 @@
             <input type="checkbox" id="toggle" checked>
             <label for="toggle" class="toggle-switch">+/-</label>
         </div>
-        <span id="tally">0</span>
+        <span class="tally_count" id="tally">0</span>
     </div>
 
     <!-- Quick-Add Buttons -->
