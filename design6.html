@@ -16,9 +16,28 @@
             margin: 0 auto;   // Centering (if needed)
             padding: 5% 5%;   // Add padding to avoid content sticking to the edges
         }
+        .quick-add-buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: nowrap;  /* Prevent wrapping onto the next line */
+        }
+
         .quick-add-buttons button {
-            padding: 15px 20px;  // Increase the padding
-            font-size: 18px;    // Increase the font size for clarity
+            flex: 1;  /* Make each button grow equally to fill space */
+            margin: 0 5px;  /* Some margin for separation */
+            text-align: center;  /* Center the button text */
+            height: 60px;  /* Increase this value to adjust the height */
+            line-height: 60px;  /* To vertically center text inside the button */
+        }
+
+
+        /* Adjust the margin for the first and last buttons */
+        .quick-add-buttons button:first-child {
+            margin-left: 0;
+        }
+
+        .quick-add-buttons button:last-child {
+            margin-right: 0;
         }
         
         .drinks-list {
