@@ -196,15 +196,17 @@
     let totalAlcoholUnits = 0;
 
     // Key format: 'totalAlcoholUnits-YYYY-MM-DD'
-    let today = new Date().toISOString().split('T')[0];  // Gets current date in 'YYYY-MM-DD' format
+    let today = new Date().toLocaleDateString('en-CA'); // Gets current date in 'YYYY-MM-DD' format in local time
+
     let selectedDate = today;
 
     const datePicker = document.getElementById('datePicker');
 
     function changeDate(delta) {
-        const currentDate = new Date(selectedDate);
+        let [year, month, day] = selectedDate.split('-').map(Number);
+        const currentDate = new Date(year, month - 1, day); // Month is 0-indexed
         currentDate.setDate(currentDate.getDate() + delta);
-        selectedDate = currentDate.toISOString().split('T')[0];
+        selectedDate = currentDate.toLocaleDateString('en-CA');
         datePicker.value = selectedDate;
         loadDateTally();
     }
