@@ -216,8 +216,7 @@
     }
     
     function loadDateTally() {
-        selectedDate = new Date(datePicker.value); // Update the selectedDate here
-        totalAlcoholUnits = parseInt(localStorage.getItem(selectedDate) || "0", 10);
+        totalAlcoholUnits = parseInt(localStorage.getItem('totalAlcoholUnits-' + selectedDate) || "0", 10);
         updateDisplay();
     }
 
