@@ -195,19 +195,23 @@
     const drinkList = document.getElementById('drinkList');
     let totalAlcoholUnits = 0;
 
-    // Key format: 'totalAlcoholUnits-YYYY-MM-DD'
-    let today = new Date().toLocaleDateString('en-CA'); // Gets current date in 'YYYY-MM-DD' format in local time
-
-    let selectedDate = today;
-
     const datePicker = document.getElementById('datePicker');
+    datePicker.value = getTodayDateString();
+    let selectedDate = datePicker.value;
 
+    // Key format: 'totalAlcoholUnits-YYYY-MM-DD'
+    function getTodayDateString() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+    
     function changeDate(delta) {
-        let [year, month, day] = selectedDate.split('-').map(Number);
-        const currentDate = new Date(year, month - 1, day); // Month is 0-indexed
+        const currentDate = new Date(dateField.value);
         currentDate.setDate(currentDate.getDate() + delta);
-        selectedDate = currentDate.toLocaleDateString('en-CA');
-        datePicker.value = selectedDate;
+        datePicker.valueAsDate = currentDate;
         loadDateTally();
     }
 
