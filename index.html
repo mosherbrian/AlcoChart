@@ -209,7 +209,7 @@
     }
     
     function changeDate(delta) {
-        selectedDate = new Date(datePicker.value);
+        selectedDate = new Date(getDateString(datePicker.value));
         selectedDate.setDate(selectedDate.getDate() + delta);
         selectedDate = getDateString(selectedDate);
         datePicker.value = selectedDate;
