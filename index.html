@@ -208,10 +208,17 @@
     }
     
     function changeDate(delta) {
-        let currentDate = new Date(datePicker.valueAsDate);
+        console.log("Initial datePicker value:", datePicker.value);
+        console.log("Delta value:", delta);
+    
+        const currentDate = new Date(datePicker.valueAsDate);
         currentDate.setDate(currentDate.getDate() + delta);
-        selectedDate = getDateString(currentDate);  // Use getDateString to ensure correct format
+        
+        selectedDate = getDateString(currentDate); 
         datePicker.value = selectedDate;
+    
+        console.log("Updated datePicker value:", datePicker.value);
+        
         loadDateTally();
     }
     
