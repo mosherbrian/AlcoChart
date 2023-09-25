@@ -210,7 +210,7 @@
     
     function changeDate(delta) {
         selectedDate = new Date(datePicker.value);
-        currentDate.setDate(currentDate.getDate() + delta);
+        selectedDate.setDate(selectedDate.getDate() + delta);
         datePicker.valueAsDate = selectedDate;
         loadDateTally();
     }
