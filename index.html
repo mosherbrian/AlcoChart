@@ -215,6 +215,7 @@
         currentDate.setDate(currentDate.getDate() + delta);
         
         selectedDate = getDateString(currentDate); 
+        console.log("Formatted date string:", selectedDate);
         datePicker.value = selectedDate;
     
         console.log("Updated datePicker value:", datePicker.value);
