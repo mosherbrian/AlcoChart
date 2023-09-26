@@ -208,21 +208,10 @@
     }
     
     function changeDate(delta) {
-        console.log("Initial datePicker value:", datePicker.value);
-        console.log("Delta value:", delta);
-    
         const currentDate = new Date(datePicker.value + 'T00:00:00'); // force local midnight
-        console.log("Date before increment:", currentDate.toISOString());
-
         currentDate.setDate(currentDate.getDate() + delta);
-        console.log("Date after increment:", currentDate.toISOString());
-        
         selectedDate = getDateString(currentDate); 
-        console.log("Formatted date string:", selectedDate);
         datePicker.value = selectedDate;
-    
-        console.log("Updated datePicker value:", datePicker.value);
-        
         loadDateTally();
     }
     
