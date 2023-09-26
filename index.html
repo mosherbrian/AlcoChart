@@ -292,7 +292,7 @@
         const params = new URLSearchParams(window.location.search);
         const encodedData = params.get('data');
         
-        console.debug.encodedData);
+        console.debug(encodedData);
         if (encodedData) {
             const decodedString = atob(encodedData);
             const deserializedData = JSON.parse(decodedString);
