@@ -212,7 +212,9 @@
         console.log("Delta value:", delta);
     
         const currentDate = new Date(datePicker.valueAsDate);
+        console.log("Date before increment:", currentDate.toISOString());
         currentDate.setDate(currentDate.getDate() + delta);
+        console.log("Date after increment:", currentDate.toISOString());
         
         selectedDate = getDateString(currentDate); 
         console.log("Formatted date string:", selectedDate);
