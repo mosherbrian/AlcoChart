@@ -189,6 +189,7 @@
     <div class="drinks-list" id="drinkList"></div>
 </div>
 <div class="toast" id="toast"></div>
+<a href="#" id="shareableLink">Copy Shareable Link</a>
 
 <script>
     const tallyDisplay = document.getElementById('tally');
@@ -229,6 +230,7 @@
     // On page load
     document.addEventListener('DOMContentLoaded', (event) => {
         datePicker.value = selectedDate;
+        deserializeURLParamsToData();
         loadDateTally();
     });
     
@@ -244,8 +246,11 @@
  
         // Save to localStorage with date-specific key
         localStorage.setItem('totalAlcoholUnits-' + selectedDate, totalAlcoholUnits);
+        const serializedData = serializeDataToURLParams();
+        window.history.pushState({}, '', '?' + serializedData);
+        updateShareableLink();        
         updateDisplay();
-
+        
         let operationMsg = toggle.checked ? "Added" : "Subtracted";
         showToast(`${operationMsg} ${alcoholContent} units`);
     }
@@ -253,6 +258,52 @@
     function updateDisplay() {
         totalAlcoholUnits = parseInt(localStorage.getItem('totalAlcoholUnits-' + selectedDate)) || 0;
         tallyDisplay.innerText = totalAlcoholUnits.toString();
+    }
+
+    function updateShareableLink() {
+        const linkElement = document.getElementById('shareableLink');
+        linkElement.href = window.location.href;
+        linkElement.textContent = window.location.href;
+    }
+
+    function serializeDataToURLParams() {
+        let dates = [];
+        let values = [];
+        
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('totalAlcoholUnits-')) {
+                dates.push(key.split('-')[1]);
+                values.push(localStorage.getItem(key));
+            }
+        }
+        
+        const serializedData = {
+            dates: dates.join(','),
+            values: values.join(',')
+        };
+
+        // Convert the serializedData object to a JSON string and then encode with Base64
+        const encodedData = btoa(JSON.stringify(serializedData));
+        return 'data=' + encodedData;
+    }
+
+    function deserializeURLParamsToData() {
+        const params = new URLSearchParams(window.location.search);
+        const encodedData = params.get('data');
+        
+        if (encodedData) {
+            const decodedString = atob(encodedData);
+            const deserializedData = JSON.parse(decodedString);
+            
+            const dates = deserializedData.dates.split(',');
+            const values = deserializedData.values.split(',');
+            
+            for (let i = 0; i < dates.length; i++) {
+                const key = 'totalAlcoholUnits-' + dates[i];
+                localStorage.setItem(key, values[i]);
+            }
+        }
     }
 
     // Sample data for drinks. In a real application, this would be fetched from a database or API.
