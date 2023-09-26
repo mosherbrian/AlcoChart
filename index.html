@@ -212,7 +212,9 @@
         console.log("Delta value:", delta);
     
         const currentDate = new Date(datePicker.valueAsDate);
+        const currentDate = new Date(datePicker.value + 'T00:00:00'); // force local midnight
         console.log("Date before increment:", currentDate.toISOString());
+
         currentDate.setDate(currentDate.getDate() + delta);
         console.log("Date after increment:", currentDate.toISOString());
         
