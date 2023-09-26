@@ -295,6 +295,7 @@
         if (encodedData) {
             const decodedString = atob(encodedData);
             const deserializedData = JSON.parse(decodedString);
+            console.debug(deserializedData);
             
             const dates = deserializedData.dates.split(',');
             const values = deserializedData.values.split(',');
