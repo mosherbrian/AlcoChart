@@ -105,30 +105,25 @@
     }
 
     function compressData(dates, values) {
-        // Convert to UTC date
-        function toUTC(dateString) {
-            let [year, month, day] = dateString.split('-').map(Number);
-            return new Date(Date.UTC(year, month - 1, day));
-        }
-
-        // Increment UTC date
-        function incrementUTC(date) {
-            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1));
-        }
+        // Convert dates and values into a map
+        let dateValueMap = new Map();
+        dates.forEach((date, i) => {
+            dateValueMap.set(date, values[i]);
+        });
 
         // Generate list of all days from first to last date
-        let startDate = toUTC(dates[0]);
-        let endDate = toUTC(dates[dates.length - 1]);
+        let startDate = new Date(dates[0] + "T00:00:00Z");
+        let endDate = new Date(dates[dates.length - 1] + "T00:00:00Z");
         let allDates = [];
         while (startDate <= endDate) {
             allDates.push(new Date(startDate));
-            startDate = incrementUTC(startDate);
-        }        
-        
-        // Match data points with dates, filling in missing points with zero
+            startDate.setUTCDate(startDate.getUTCDate() + 1);
+        }
+
+        // Generate fullValues using the map
         let fullValues = allDates.map(date => {
-            let index = dates.indexOf(date.toISOString().split('T')[0]);
-            return (index !== -1) ? values[index] : 0;
+            let dateStr = date.toISOString().split('T')[0];
+            return dateValueMap.has(dateStr) ? dateValueMap.get(dateStr) : 0;
         });
 
         let frequencyTable = buildFrequencyTable(fullValues);
