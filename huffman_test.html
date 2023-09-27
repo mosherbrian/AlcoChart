@@ -348,6 +348,10 @@
 
             // Extract the decoded data from local storage and compare
             dates.forEach((date, index) => {
+                if (date === "2023-11-05") {
+                    console.debug("Nov 5, 2023");
+                }            
+
                 let storedValue = parseInt(localStorage.getItem("totalAlcoholUnits-" + date));
                 assert(storedValue === values[index], `Expected ${values[index]}, but got ${storedValue} for key totalAlcoholUnits-${date} when testing URL encoding and decoding.`);
             });
