@@ -161,7 +161,12 @@
                 values.push(parseInt(localStorage.getItem(key)));
             }
         }
-        let { startDate, data, frequencyTable } = compressData(keys, values);
+        
+        // Sort the dates
+        keys.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+        let sortedValues = keys.map(key => parseInt(localStorage.getItem(prefix + key)));
+        
+        let { startDate, data, frequencyTable } = compressData(keys, sortedValues);
         
         // Pack data into a single JSON object
         let packedData = {
@@ -169,11 +174,11 @@
             data: data,
             frequencyTable: frequencyTable
         };
-        
-        // Convert the packed data to base64
-        let base64Data = btoa(unescape(encodeURIComponent(JSON.stringify(packedData))));
-        return baseURL + "?data=" + base64Data;
-    }
+
+        // Convert packedData to base64
+        let base64Encoded = btoa(unescape(encodeURIComponent(JSON.stringify(packedData))));
+        return `${baseURL}?data=${base64Encoded}`;
+    }    
 
     function decodeURLToLocalData(url) {
         let parsedURL = new URL(url);
