@@ -274,6 +274,30 @@
             }
         }
 
+        // Test: Encoding and Decoding using URLs
+        originalDates = ["2023-11-05"];
+        originalValues = [getRandomValue()];
+
+        compressed = compressData(originalDates, originalValues);
+        console.log("Compressed Data for 2023-11-05:", compressed);
+
+        let baseURL = "https://www.example.com?";
+        let encodedURL = encodeLocalDataToURL(baseURL, originalDates, originalValues); // Adjusting to pass original dates and values
+        console.log("Encoded URL:", encodedURL);
+
+        let decodedData = decodeURLToLocalData(encodedURL);
+        console.log("Decoded Data:", decodedData);
+
+        let errorKey = "totalAlcoholUnits-2023-11-05";
+        if (decodedData[errorKey] !== originalValues[0]) {
+            console.error("URL Decoding Issue for 2023-11-05:", {
+                originalValue: originalValues[0],
+                decodedValue: decodedData[errorKey],
+                encodedURL: encodedURL
+            });
+            assert(decodedData[errorKey] === originalValues[0], `Expected ${originalValues[0]}, but got ${decodedData[errorKey]} for key ${errorKey} when testing URL encoding and decoding.`);
+        }
+
         // Single Date and Value
         originalDates = ["2023-09-24"];
         originalValues = [300];
