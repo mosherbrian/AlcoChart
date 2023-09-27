@@ -105,14 +105,25 @@
     }
 
     function compressData(dates, values) {
+        // Convert to UTC date
+        function toUTC(dateString) {
+            let [year, month, day] = dateString.split('-').map(Number);
+            return new Date(Date.UTC(year, month - 1, day));
+        }
+
+        // Increment UTC date
+        function incrementUTC(date) {
+            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1));
+        }
+
         // Generate list of all days from first to last date
-        let startDate = new Date(dates[0]);
-        let endDate = new Date(dates[dates.length - 1]);
+        let startDate = toUTC(dates[0]);
+        let endDate = toUTC(dates[dates.length - 1]);
         let allDates = [];
         while (startDate <= endDate) {
             allDates.push(new Date(startDate));
-            startDate.setDate(startDate.getDate() + 1);
-        }
+            startDate = incrementUTC(startDate);
+        }        
         
         // Match data points with dates, filling in missing points with zero
         let fullValues = allDates.map(date => {
