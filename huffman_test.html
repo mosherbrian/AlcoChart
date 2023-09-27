@@ -317,7 +317,7 @@
             });
 
             // Encode the data to URL
-            let generatedUrl = encodeLocalDataToURL();
+            let generatedUrl = encodeLocalDataToURL(window.location.href);
 
             // Clear localStorage to simulate a new environment
             localStorage.clear();
