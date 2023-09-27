@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huffman Encoding Test Page</title>
+</head>
+<body>
+
+<h2>Huffman Encoding Test Page</h2>
+<button onclick="runTests()">Run Tests</button>
+<div id="testResults"></div>
+
+<script>
+    // Huffman Encoding and Related Utility Functions
+    class Node {
+        constructor(char, frequency) {
+            this.char = char;
+            this.frequency = frequency;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+    function buildFrequencyTable(values) {
+        let frequencyTable = {};
+        for (let value of values) {
+            frequencyTable[value] = (frequencyTable[value] || 0) + 1;
+        }
+        return frequencyTable;
+    }
+
+    function buildHuffmanTree(frequencyTable) {
+        let nodes = Object.keys(frequencyTable).map(key => new Node(parseInt(key), frequencyTable[key]));
+        while (nodes.length > 1) {
+            nodes.sort((a, b) => a.frequency - b.frequency);
+            let left = nodes.shift();
+            let right = nodes.shift();
+            let parent = new Node(null, left.frequency + right.frequency);
+            parent.left = left;
+            parent.right = right;
+            nodes.push(parent);
+        }
+        return nodes[0];
+    }
+
+    function huffmanEncode(tree, values) {
+        let mapping = {};
+        (function buildMap(node, path) {
+            if (!node) return;
+            if (node.char !== null) mapping[node.char] = path;
+            buildMap(node.left, path + '0');
+            buildMap(node.right, path + '1');
+        })(tree, "");
+        let valuesWithEndMarker = [...values, 601];
+        return valuesWithEndMarker.map(value => mapping[value]).join('');
+    }
+
+    function huffmanDecode(tree, encoded) {
+        let decoded = [];
+        let currentNode = tree;
+        for (let bit of encoded) {
+            currentNode = (bit === '0') ? currentNode.left : currentNode.right;
+            
+            if (currentNode === undefined) {
+                break;
+            }
+
+            if (currentNode.char !== null) {
+                // Break when we encounter the end-of-data marker
+                if(currentNode.char === 601) break;
+                decoded.push(currentNode.char);
+                currentNode = tree;
+            }
+        }
+        return decoded;
+    }
+
+    function binaryToBase64(binary) {
+        let binLength = binary.length;
+        let byteCount = Math.ceil(binLength / 8);
+        let bytes = new Uint8Array(byteCount);
+
+        for (let i = 0; i < binLength; i++) {
+            if (binary[i] === '1') {
+                bytes[Math.floor(i / 8)] |= (1 << (7 - (i % 8)));
+            }
+        }
+
+        let base64Encoded = btoa(String.fromCharCode.apply(null, bytes));
+        return base64Encoded;
+    }
+
+    function base64ToBinary(base64) {
+        let raw = atob(base64);
+        let rawLength = raw.length;
+        let binary = '';
+
+        for (let i = 0; i < rawLength; i++) {
+            let bin = raw.charCodeAt(i).toString(2);
+            binary += "0".repeat(8 - bin.length) + bin;
+        }
+
+        return binary;
+    }
+
+    function compressData(dates, values) {
+        // Generate list of all days from first to last date
+        let startDate = new Date(dates[0]);
+        let endDate = new Date(dates[dates.length - 1]);
+        let allDates = [];
+        while (startDate <= endDate) {
+            allDates.push(new Date(startDate));
+            startDate.setDate(startDate.getDate() + 1);
+        }
+        
+        // Match data points with dates, filling in missing points with zero
+        let fullValues = allDates.map(date => {
+            let index = dates.indexOf(date.toISOString().split('T')[0]);
+            return (index !== -1) ? values[index] : 0;
+        });
+
+        let frequencyTable = buildFrequencyTable(fullValues);
+        frequencyTable[601] = 1;
+        let tree = buildHuffmanTree(frequencyTable);
+        let encodedValues = huffmanEncode(tree, fullValues);
+        let base64Encoded = binaryToBase64(encodedValues);
+
+        return { 
+            startDate: dates[0], 
+            data: base64Encoded, 
+            frequencyTable 
+        };
+    }
+
+    function decompressData(dataObj) {
+        let { data, startDate, frequencyTable } = dataObj;
+        let binaryData = base64ToBinary(data);
+        let tree = buildHuffmanTree(frequencyTable);
+        let decodedValues = huffmanDecode(tree, binaryData);
+        
+        let startDt = new Date(startDate);
+        let decodedDates = [];
+        for (let i = 0; i < decodedValues.length; i++) {
+            let currentDate = new Date(startDt);
+            currentDate.setDate(currentDate.getDate() + i);
+            decodedDates.push(currentDate.toISOString().split('T')[0]);
+        }
+        
+        return { dates: decodedDates, values: decodedValues };
+    }
+
+    function encodeLocalDataToURL(baseURL) {
+        let prefix = "totalAlcoholUnits-";
+        let keys = [];
+        let values = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            if (key.startsWith(prefix)) {
+                keys.push(key.substring(prefix.length));
+                values.push(parseInt(localStorage.getItem(key)));
+            }
+        }
+        let { startDate, data, frequencyTable } = compressData(keys, values);
+        
+        // Pack data into a single JSON object
+        let packedData = {
+            startDate: startDate,
+            data: data,
+            frequencyTable: frequencyTable
+        };
+        
+        // Convert the packed data to base64
+        let base64Data = btoa(unescape(encodeURIComponent(JSON.stringify(packedData))));
+        return baseURL + "?data=" + base64Data;
+    }
+
+    function decodeURLToLocalData(url) {
+        let parsedURL = new URL(url);
+        let base64Data = parsedURL.searchParams.get("data");
+        
+        // Decode the base64 to JSON
+        let packedData = JSON.parse(decodeURIComponent(escape(atob(base64Data))));
+        
+        let { dates, values } = decompressData({
+            data: packedData.data,
+            startDate: packedData.startDate,
+            frequencyTable: packedData.frequencyTable
+        });
+
+        let decodedData = {};
+        dates.forEach((date, index) => {
+            decodedData["totalAlcoholUnits-" + date] = values[index];
+        });
+
+        // Save the decoded data back to local storage
+        for (let key in decodedData) {
+            localStorage.setItem(key, decodedData[key]);
+        }
+
+        return decodedData;
+    }
+
+    function runTests() {
+        const testResults = document.getElementById('testResults');
+        let passed = 0;
+        let failed = 0;
+
+        function assert(condition, message) {
+            if (condition) {
+                passed++;
+                testResults.innerHTML += `<div style="color: green;">PASS: ${message}</div>`;
+            } else {
+                failed++;
+                testResults.innerHTML += `<div style="color: red;">FAIL: ${message}</div>`;
+            }
+        }
+
+        function assertDecompressedMatchesOriginal(decompressedDates, decompressedValues, originalDates, originalValues) {
+            for (let i = 0; i < decompressedDates.length; i++) {
+                let date = decompressedDates[i];
+                let index = originalDates.indexOf(date);
+
+                if (index !== -1) {
+                    // Date was in original data
+                    assert(decompressedValues[i] === originalValues[index], `Value for date ${date} should be ${originalValues[index]} but was ${decompressedValues[i]}`);
+                } else {
+                    // Date was not in original data, should be 0
+                    assert(decompressedValues[i] === 0, `Value for date ${date} should be 0 but was ${decompressedValues[i]}`);
+                }
+            }
+        }
+        
+        // Generate 20 random dates within 2023
+        function getRandomDateIn2023() {
+            const start = new Date('2023-01-01');
+            const end = new Date('2023-12-31');
+            const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            return randomDate.toISOString().split('T')[0];
+        }
+
+        // Generate a random value between 1 and 600
+        function getRandomValue() {
+            return Math.floor(Math.random() * 600) + 1;
+        }
+
+        // Basic Encoding and Decoding Data
+        let originalDates = ["2023-09-24", "2023-09-25", "2023-09-26"];
+        let originalValues = [60, 124, 72];
+
+        let compressed = compressData(originalDates, originalValues);
+        let { dates, values } = decompressData(compressed);
+        // assert(JSON.stringify(dates) === JSON.stringify(originalDates) && JSON.stringify(values) === JSON.stringify(originalValues), "Data should be encoded and then decoded to its original state");
+        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
+
+        // Single Date and Value
+        originalDates = ["2023-09-24"];
+        originalValues = [300];
+        compressed = compressData(originalDates, originalValues);
+        ({ dates, values } = decompressData(compressed));
+        // assert(dates.length === 1 && values[0] === 300, "Single date and value should be encoded and decoded correctly");
+        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
+
+        // Maximum Value
+        originalDates = ["2023-09-24"];
+        originalValues = [600];
+        compressed = compressData(originalDates, originalValues);
+        ({ dates, values } = decompressData(compressed));
+        // assert(values[0] === 600, "Maximum value should be encoded and decoded correctly");
+        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
+
+        // All Dates with Maximum Value
+        originalDates = Array.from({length: 365}, (_, i) => `2023-09-${(i % 30) + 1}`);
+        originalValues = Array(365).fill(600);
+        compressed = compressData(originalDates, originalValues);
+        ({ dates, values } = decompressData(compressed));
+        // assert(values.every(v => v === 600), "All dates with maximum value should be encoded and decoded correctly");
+        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
+
+        // Future Year
+        originalDates = ["2025-09-24"];
+        originalValues = [400];
+        compressed = compressData(originalDates, originalValues);
+        ({ dates, values } = decompressData(compressed));
+        // assert(dates[0] === "2025-09-24" && values[0] === 400, "Future year data should be encoded and decoded correctly");
+        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
+
+        // No Data
+        originalDates = [];
+        originalValues = [];
+        compressed = compressData(originalDates, originalValues);
+        ({ startDate, data } = compressData(originalDates, originalValues));
+        ({ dates, values } = decompressData(compressed));
+        // assert(data === '', "No data should return an empty encoded string");
+        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
+
+        const uniqueRandomDates = new Set();
+        while (uniqueRandomDates.size < 20) {
+            uniqueRandomDates.add(getRandomDateIn2023());
+        }
+
+        let randomDates = [...uniqueRandomDates];
+        let randomValues = randomDates.map(() => getRandomValue());
+
+        // Test
+        originalDates = randomDates;
+        originalValues = randomValues;
+        compressed = compressData(originalDates, originalValues);
+        ({ dates, values } = decompressData(compressed));
+        // assert(JSON.stringify(dates.sort()) === JSON.stringify(originalDates.sort()) && JSON.stringify(values.sort()) === JSON.stringify(originalValues.sort()), "Random dates and values should be encoded and then decoded to its original state");
+        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
+
+        // Test: Encoding and Decoding data to and from URL
+        (() => {
+            let initialData = {
+                "totalAlcoholUnits-2023-09-01": 3,
+                "totalAlcoholUnits-2023-09-02": 2,
+                "totalAlcoholUnits-2023-09-03": 1,
+                "totalAlcoholUnits-2023-09-04": 4,
+                "totalAlcoholUnits-2023-09-05": 2,
+            };
+            for (let key in initialData) {
+                localStorage.setItem(key, initialData[key]);
+            }
+
+            let baseURL = "https://www.example.com";
+            let generatedURL = encodeLocalDataToURL(baseURL);
+            
+            // Clear the local storage to simulate a new session
+            localStorage.clear();
+            
+            let decodedData = decodeURLToLocalData(generatedURL);
+            
+            // Diagnostic logs
+            console.log("Original Data:", initialData);
+            console.log("Encoded URL:", generatedURL);
+            console.log("Decoded Data:", decodedData);
+
+            for (let key in initialData) {
+                let value = initialData[key];
+                let decodedValue = decodedData[key];
+                assert(value === decodedValue, `Expected ${value}, but got ${decodedValue} for key ${key} when testing URL encoding and decoding.`);
+            }
+
+            console.log("Encoding and Decoding data to and from URL: PASSED");
+        })();
+
+        testResults.innerHTML += `<div>Total Tests: ${passed + failed}, Passed: ${passed}, Failed: ${failed}</div>`;
+    }
+</script>
+</body>
+</html>
