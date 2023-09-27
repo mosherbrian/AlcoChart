@@ -258,6 +258,22 @@
         // assert(JSON.stringify(dates) === JSON.stringify(originalDates) && JSON.stringify(values) === JSON.stringify(originalValues), "Data should be encoded and then decoded to its original state");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
+        // Test URL Encoding and Decoding for Nov 5, 2023
+        {
+            let testDate = "2023-11-05";
+            let testData = {
+                ["totalAlcoholUnits-" + testDate]: 400
+            };
+            for (let key in testData) {
+                localStorage.setItem(key, testData[key]);
+            }
+            let encodedURL = encodeLocalDataToURL("https://www.example.com");
+            let decodedData = decodeURLToLocalData(encodedURL);
+            for (let key in testData) {
+                assert(decodedData[key] === testData[key], `Expected ${testData[key]}, but got ${decodedData[key]} for key ${key} when testing URL encoding and decoding.`);
+            }
+        }
+
         // Single Date and Value
         originalDates = ["2023-09-24"];
         originalValues = [300];
