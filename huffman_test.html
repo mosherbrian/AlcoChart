@@ -105,29 +105,27 @@
     }
 
     function compressData(dates, values) {
-        // Convert dates and values into a map
+        // Convert dates and values into a dateValueMap
         let dateValueMap = new Map();
         dates.forEach((date, i) => {
             dateValueMap.set(date, values[i]);
         });
 
-        // Generate list of all days from first to last date
+        // Generate list of all days from first to last date, storing them in a new map with default values of 0
         let startDate = new Date(dates[0] + "T00:00:00Z");
         let endDate = new Date(dates[dates.length - 1] + "T00:00:00Z");
-        let allDates = [];
+        let allDatesMap = new Map();
         while (startDate <= endDate) {
-            allDates.push(new Date(startDate));
+            let dateStr = startDate.toISOString().split('T')[0];
+            allDatesMap.set(dateStr, dateValueMap.get(dateStr) || 0);
             startDate.setUTCDate(startDate.getUTCDate() + 1);
         }
 
-        // Generate fullValues using the map
-        let fullValues = allDates.map(date => {
-            let dateStr = date.toISOString().split('T')[0];
-            return dateValueMap.has(dateStr) ? dateValueMap.get(dateStr) : 0;
-        });
+        // Flatten the values to prepare for encoding
+        let fullValues = Array.from(allDatesMap.values());
 
         let frequencyTable = buildFrequencyTable(fullValues);
-        frequencyTable[601] = 1;
+        frequencyTable[601] = 1; // end-of-data marker
         let tree = buildHuffmanTree(frequencyTable);
         let encodedValues = huffmanEncode(tree, fullValues);
         let base64Encoded = binaryToBase64(encodedValues);
