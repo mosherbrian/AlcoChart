@@ -310,40 +310,34 @@
         // assert(JSON.stringify(dates.sort()) === JSON.stringify(originalDates.sort()) && JSON.stringify(values.sort()) === JSON.stringify(originalValues.sort()), "Random dates and values should be encoded and then decoded to its original state");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
-        // Test: Encoding and Decoding data to and from URL
-        (() => {
-            let initialData = {
-                "totalAlcoholUnits-2023-09-01": 3,
-                "totalAlcoholUnits-2023-09-02": 2,
-                "totalAlcoholUnits-2023-09-03": 1,
-                "totalAlcoholUnits-2023-09-04": 4,
-                "totalAlcoholUnits-2023-09-05": 2,
-            };
-            for (let key in initialData) {
-                localStorage.setItem(key, initialData[key]);
-            }
+        function testUrlEncodingDecoding(dates, values) {
+            // Store the data in local storage
+            dates.forEach((date, index) => {
+                localStorage.setItem("totalAlcoholUnits-" + date, values[index]);
+            });
 
-            let baseURL = "https://www.example.com";
-            let generatedURL = encodeLocalDataToURL(baseURL);
-            
-            // Clear the local storage to simulate a new session
+            // Encode the data to URL
+            let generatedUrl = encodeLocalDataToURL();
+
+            // Clear localStorage to simulate a new environment
             localStorage.clear();
-            
-            let decodedData = decodeURLToLocalData(generatedURL);
-            
-            // Diagnostic logs
-            console.log("Original Data:", initialData);
-            console.log("Encoded URL:", generatedURL);
-            console.log("Decoded Data:", decodedData);
 
-            for (let key in initialData) {
-                let value = initialData[key];
-                let decodedValue = decodedData[key];
-                assert(value === decodedValue, `Expected ${value}, but got ${decodedValue} for key ${key} when testing URL encoding and decoding.`);
-            }
+            // Decode the URL back to local storage
+            decodeURLToLocalData(generatedUrl);
 
-            console.log("Encoding and Decoding data to and from URL: PASSED");
-        })();
+            // Extract the decoded data from local storage and compare
+            dates.forEach((date, index) => {
+                let storedValue = parseInt(localStorage.getItem("totalAlcoholUnits-" + date));
+                assert(storedValue === values[index], `Expected ${values[index]}, but got ${storedValue} for key totalAlcoholUnits-${date} when testing URL encoding and decoding.`);
+            });
+
+            // Clean up the local storage for the next test
+            dates.forEach(date => {
+                localStorage.removeItem("totalAlcoholUnits-" + date);
+            });
+        }            
+
+        testUrlEncodingDecoding(randomDates, randomValues);
 
         testResults.innerHTML += `<div>Total Tests: ${passed + failed}, Passed: ${passed}, Failed: ${failed}</div>`;
     }
