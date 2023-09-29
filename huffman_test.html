@@ -401,6 +401,37 @@
 
         testUrlEncodingDecoding(randomDates, randomValues);
 
+        function testGenerateAllDatesMap() {
+            let startDate = "2023-09-01";
+            let endDate = "2023-09-03";
+            let allDatesMap = generateAllDatesMap(startDate, endDate);
+            assert(allDatesMap.size === 3, "Should generate a map with 3 dates");
+            assert(allDatesMap.has("2023-09-01") && allDatesMap.get("2023-09-01") === 0, "Map should have date 2023-09-01 with value 0");
+        }
+
+        function testFillValuesIntoDateMap() {
+            let allDatesMap = new Map([["2023-09-01", 0], ["2023-09-02", 0], ["2023-09-03", 0]]);
+            let dates = ["2023-09-01", "2023-09-03"];
+            let values = [50, 100];
+            fillValuesIntoDateMap(dates, values, allDatesMap);
+            assert(allDatesMap.get("2023-09-01") === 50, "Should update value for date 2023-09-01");
+            assert(allDatesMap.get("2023-09-03") === 100, "Should update value for date 2023-09-03");
+            assert(allDatesMap.get("2023-09-02") === 0, "Should not update value for date 2023-09-02");
+        }
+
+        function testCompressData() {
+            let dates = ["2023-09-01", "2023-09-03"];
+            let values = [50, 100];
+            let compressed = compressData(dates, values);
+            let expectedStartDate = "2023-09-01";
+            assert(compressed.startDate === expectedStartDate, `Expected start date to be ${expectedStartDate} but got ${compressed.startDate}`);
+        }
+
+        // Run the new tests
+        testGenerateAllDatesMap();
+        testFillValuesIntoDateMap();
+        testCompressData();
+
         testResults.innerHTML += `<div>Total Tests: ${passed + failed}, Passed: ${passed}, Failed: ${failed}</div>`;
     }
 </script>
