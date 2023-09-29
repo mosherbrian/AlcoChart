@@ -281,8 +281,12 @@
         compressed = compressData(["2023-11-05"], [400]);
         assert(compressed.startDate === "2023-11-05", "Compression: Start date should be '2023-11-05'");
         let decompressed = decompressData(compressed);
-        assert(decompressed.dates.includes("2023-11-05"), "Compression: '2023-11-05' should be present in decompressed data");
-        assert(decompressed.values[decompressed.dates.indexOf("2023-11-05")] === 400, "Compression: Value for '2023-11-05' should be 400 in decompressed data");
+        if(decompressed && decompressed.dates && decompressed.values) {
+            assert(decompressed.dates.includes("2023-11-05"), "Compression: '2023-11-05' should be present in decompressed data");
+            assert(decompressed.values[decompressed.dates.indexOf("2023-11-05")] === 400, "Compression: Value for '2023-11-05' should be 400 in decompressed data");
+        } else {
+            assert(false, "Decompressed data should have dates and values properties.");
+        }
 
         // Encoding Test
         encodedURL = encodeLocalDataToURL("https://www.example.com", ["2023-11-05"], [400]);
