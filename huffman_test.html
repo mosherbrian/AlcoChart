@@ -297,6 +297,8 @@
         let base64Encoded = binaryToBase64(encodedValues);
 
         let decompressedData = decompressData({ startDate: originalDates[0], data: base64Encoded, frequencyTable: frequencyTable });
+        dates = Array.from(decompressedResults.valuesMap.keys());
+        values = Array.from(decompressedResults.valuesMap.values());
         assert(decompressedData.dates.includes("2023-11-05"), "'2023-11-05' should be present in decompressed data");
         assert(decompressedData.values[decompressedData.dates.indexOf("2023-11-05")] === 400, "Value for '2023-11-05' should be 400 in decompressed data");
 
