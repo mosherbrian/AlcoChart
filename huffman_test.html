@@ -591,6 +591,60 @@
         testFillValuesIntoDateMapForNov5();
         testCompressDataForNov5();
 
+        function generateTestData() {
+            let startDate = new Date("2023-01-01");
+            let endDate = new Date("2024-12-31");
+
+            let allDates = [];
+            while (startDate <= endDate) {
+                allDates.push(new Date(startDate));
+                startDate.setDate(startDate.getDate() + 1);
+            }
+
+            let filledDatesCount = Math.floor(allDates.length * 0.9);
+
+            // Randomly shuffle all dates
+            for (let i = allDates.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [allDates[i], allDates[j]] = [allDates[j], allDates[i]];
+            }
+
+            // Slice the array to get 90% of the dates
+            let selectedDates = allDates.slice(0, filledDatesCount);
+
+            // Sort the dates
+            selectedDates.sort((a, b) => a - b);
+
+            // Generate values for the selected dates
+            let values = selectedDates.map(() => Math.floor(Math.random() * 500));  // Assuming value range is 0-500
+
+            return {
+                dates: selectedDates.map(d => d.toISOString().split('T')[0]),
+                values: values
+            };
+        }
+
+        // Test for two years of generated data
+        console.log("Starting test for two years of generated data...");
+        testData = generateTestData();
+        baseURL = "https://www.example.com";
+
+        // Step 1: Compress and encode the data
+        encodedURL = encodeLocalDataToURL(baseURL, testData.dates, testData.values);
+        console.log("Encoded URL:", encodedURL);
+
+        // Step 2: Decode the URL to get the data
+        decodedData = decodeURLToLocalData(encodedURL);
+        console.log("Decoded Data:", decodedData);
+
+        // Step 3: Compare the decoded data to the original data
+        for (let i = 0; i < testData.dates.length; i++) {
+            let originalKey = "totalAlcoholUnits-" + testData.dates[i];
+            if (decodedData[originalKey] !== testData.values[i]) {
+                console.error(`Mismatch at ${testData.dates[i]}: expected ${testData.values[i]} but got ${decodedData[originalKey]}`);
+                assert(false, `Decoded value for ${testData.dates[i]} should be ${testData.values[i]}`);
+            }
+        }
 
         testResults.innerHTML += `<div>Total Tests: ${passed + failed}, Passed: ${passed}, Failed: ${failed}</div>`;
     }
