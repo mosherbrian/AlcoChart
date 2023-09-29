@@ -302,7 +302,8 @@
         assert(decompressedMap.get("2023-11-05") === 400, `Expected 400, but got ${decompressedMap.get("2023-11-05")} for key 2023-11-05.`);
 
         // Encoding Test
-        let encodedURL = encodeLocalDataToURL("https://www.example.com", ["2023-11-05"], [400]);
+        localStorage.setItem("totalAlcoholUnits-2023-11-05", "40");
+        let encodedURL = encodeLocalDataToURL("https://www.example.com", ["2023-11-05"], [40]);
         // We'll just print the URL to the console for visual inspection
         console.log("Encoded URL:", encodedURL);
 
@@ -311,7 +312,7 @@
         console.log("Decoded Data from URL:", decodedData);
         console.log("Decoded value for '2023-11-05':", decodedData["totalAlcoholUnits-2023-11-05"]);
 
-        assert(decodedData["totalAlcoholUnits-2023-11-05"] === 400, "Decoding: Value for '2023-11-05' should be 400 in decoded data from URL");
+        assert(decodedData["totalAlcoholUnits-2023-11-05"] === 40, "Decoding: Value for '2023-11-05' should be 40 in decoded data from URL");
 
         // Test: Step by step compression for the specific date "2023-11-05"
         originalDates = ["2023-09-01", "2023-10-01", "2023-11-05", "2023-12-01"];
@@ -366,6 +367,7 @@
         // Test: Encoding and Decoding using URLs
         originalDates = ["2023-11-05"];
         originalValues = [getRandomValue()];
+        localStorage.setItem("totalAlcoholUnits-2023-11-05", originalValues[0].toString());
 
         compressed = compressData(originalDates, originalValues);
         console.log("Compressed Data for 2023-11-05:", compressed);
