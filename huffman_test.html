@@ -161,6 +161,7 @@
                 parseInt(startDate.split('-')[2], 10)
             ));
 
+            let currentDate = new Date(startDt);
             currentDate.setUTCDate(currentDate.getUTCDate() + i);
             let currentDateString = currentDate.toISOString().split('T')[0];
             decodedDatesMap.set(currentDateString, decodedValues[i]);
