@@ -177,11 +177,13 @@
             }
         }
         
-        // Sort the dates
-        keys.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-        let sortedValues = keys.map(key => parseInt(localStorage.getItem(prefix + key)));
+        // Sort the dates and keep track of the original indices
+        let indices = keys.map((_, index) => index).sort((a, b) => new Date(keys[a]).getTime() - new Date(keys[b]).getTime());
         
-        let { startDate, data, frequencyTable } = compressData(keys, sortedValues);
+        let sortedKeys = indices.map(index => keys[index]);
+        let sortedValues = indices.map(index => values[index]);
+
+        let { startDate, data, frequencyTable } = compressData(sortedKeys, sortedValues);
         
         // Pack data into a single JSON object
         let packedData = {
