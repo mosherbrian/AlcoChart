@@ -592,36 +592,33 @@
         testCompressDataForNov5();
 
         function generateTestData() {
-            let startDate = new Date("2023-01-01");
-            let endDate = new Date("2024-12-31");
+            // Step 1: Clear local storage
+            localStorage.clear();
 
-            let allDates = [];
-            while (startDate <= endDate) {
-                allDates.push(new Date(startDate));
-                startDate.setDate(startDate.getDate() + 1);
+            // Step 2: Generate the data for two years
+            let startDate = new Date("2022-01-01T00:00:00Z");
+            let endDate = new Date("2023-12-31T00:00:00Z");
+            let currentDate = new Date(startDate);
+
+            let dates = [];
+            let values = [];
+
+            while (currentDate <= endDate) {
+                let dateStr = currentDate.toISOString().split('T')[0];
+
+                // 90% probability of having data for the date
+                if (Math.random() < 0.9) {
+                    dates.push(dateStr);
+                    values.push(getRandomValue());
+
+                    // Save to local storage
+                    localStorage.setItem("totalAlcoholUnits-" + dateStr, values[values.length - 1]);
+                }
+
+                currentDate.setUTCDate(currentDate.getUTCDate() + 1);
             }
 
-            let filledDatesCount = Math.floor(allDates.length * 0.9);
-
-            // Randomly shuffle all dates
-            for (let i = allDates.length - 1; i > 0; i--) {
-                let j = Math.floor(Math.random() * (i + 1));
-                [allDates[i], allDates[j]] = [allDates[j], allDates[i]];
-            }
-
-            // Slice the array to get 90% of the dates
-            let selectedDates = allDates.slice(0, filledDatesCount);
-
-            // Sort the dates
-            selectedDates.sort((a, b) => a - b);
-
-            // Generate values for the selected dates
-            let values = selectedDates.map(() => Math.floor(Math.random() * 500));  // Assuming value range is 0-500
-
-            return {
-                dates: selectedDates.map(d => d.toISOString().split('T')[0]),
-                values: values
-            };
+            return { dates, values };
         }
 
         // Test for two years of generated data
