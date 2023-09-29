@@ -155,8 +155,13 @@
         let startDt = new Date(startDate);
         let decodedDatesMap = new Map();
         for (let i = 0; i < decodedValues.length; i++) {
-            let currentDate = new Date(startDt);
-            currentDate.setDate(currentDate.getDate() + i);
+            let startDt = new Date(Date.UTC(
+                parseInt(startDate.split('-')[0], 10),
+                parseInt(startDate.split('-')[1], 10) - 1, // months are 0-based
+                parseInt(startDate.split('-')[2], 10)
+            ));
+
+            currentDate.setUTCDate(currentDate.getUTCDate() + i);
             let currentDateString = currentDate.toISOString().split('T')[0];
             decodedDatesMap.set(currentDateString, decodedValues[i]);
         }
