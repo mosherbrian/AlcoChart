@@ -432,6 +432,49 @@
         testFillValuesIntoDateMap();
         testCompressData();
 
+        function testGenerateAllDatesMapForNov5() {
+            let startDate = "2023-11-01";
+            let endDate = "2023-11-07";
+            let allDatesMap = generateAllDatesMap(startDate, endDate);
+            assert(allDatesMap.size === 7, "Should generate a map with 7 dates for November test");
+            assert(allDatesMap.has("2023-11-05") && allDatesMap.get("2023-11-05") === 0, "Map should have date 2023-11-05 with value 0");
+        }
+
+        function testFillValuesIntoDateMapForNov5() {
+            let allDatesMap = new Map([
+                ["2023-11-01", 0],
+                ["2023-11-02", 0],
+                ["2023-11-03", 0],
+                ["2023-11-04", 0],
+                ["2023-11-05", 0],
+                ["2023-11-06", 0],
+                ["2023-11-07", 0]
+            ]);
+            let dates = ["2023-11-02", "2023-11-05", "2023-11-07"];
+            let values = [45, 60, 80];
+            fillValuesIntoDateMap(dates, values, allDatesMap);
+            assert(allDatesMap.get("2023-11-02") === 45, "Should update value for date 2023-11-02");
+            assert(allDatesMap.get("2023-11-05") === 60, "Should update value for date 2023-11-05");
+            assert(allDatesMap.get("2023-11-07") === 80, "Should update value for date 2023-11-07");
+        }
+
+        function testCompressDataForNov5() {
+            let dates = ["2023-11-01", "2023-11-03", "2023-11-05"];
+            let values = [50, 70, 90];
+            let compressed = compressData(dates, values);
+            let expectedStartDate = "2023-11-01";
+            assert(compressed.startDate === expectedStartDate, `Expected start date to be ${expectedStartDate} but got ${compressed.startDate}`);
+
+            let decompressed = decompressData(compressed);
+            assert(decompressed.valuesMap.get("2023-11-05") === 90, "Decompressed value for date 2023-11-05 should be 90");
+        }
+
+        // Run the new tests
+        testGenerateAllDatesMapForNov5();
+        testFillValuesIntoDateMapForNov5();
+        testCompressDataForNov5();
+
+
         testResults.innerHTML += `<div>Total Tests: ${passed + failed}, Passed: ${passed}, Failed: ${failed}</div>`;
     }
 </script>
