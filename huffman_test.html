@@ -152,15 +152,14 @@
         let tree = buildHuffmanTree(frequencyTable);
         let decodedValues = huffmanDecode(tree, binaryData);
 
-        let startDt = new Date(startDate);
+        let startDt = new Date(Date.UTC(
+            parseInt(startDate.split('-')[0], 10),
+            parseInt(startDate.split('-')[1], 10) - 1, // months are 0-based
+            parseInt(startDate.split('-')[2], 10)
+        ));
+
         let decodedDatesMap = new Map();
         for (let i = 0; i < decodedValues.length; i++) {
-            let startDt = new Date(Date.UTC(
-                parseInt(startDate.split('-')[0], 10),
-                parseInt(startDate.split('-')[1], 10) - 1, // months are 0-based
-                parseInt(startDate.split('-')[2], 10)
-            ));
-
             let currentDate = new Date(startDt);
             currentDate.setUTCDate(currentDate.getUTCDate() + i);
             let currentDateString = currentDate.toISOString().split('T')[0];
@@ -169,7 +168,6 @@
 
         return { valuesMap: decodedDatesMap };
     }
-
 
     function encodeLocalDataToURL(baseURL) {
         let prefix = "totalAlcoholUnits-";
@@ -184,8 +182,22 @@
         }
         
         // Sort the dates and keep track of the original indices
-        let indices = keys.map((_, index) => index).sort((a, b) => new Date(keys[a]).getTime() - new Date(keys[b]).getTime());
-        
+        let indices = keys.map((_, index) => index).sort((a, b) => {
+            let dateA = new Date(Date.UTC(
+                parseInt(keys[a].split('-')[0], 10),
+                parseInt(keys[a].split('-')[1], 10) - 1, // months are 0-based
+                parseInt(keys[a].split('-')[2], 10)
+            ));
+
+            let dateB = new Date(Date.UTC(
+                parseInt(keys[b].split('-')[0], 10),
+                parseInt(keys[b].split('-')[1], 10) - 1, // months are 0-based
+                parseInt(keys[b].split('-')[2], 10)
+            ));
+
+            return dateA.getTime() - dateB.getTime();
+        });
+
         let sortedKeys = indices.map(index => keys[index]);
         let sortedValues = indices.map(index => values[index]);
 
