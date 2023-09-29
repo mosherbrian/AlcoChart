@@ -151,17 +151,19 @@
         let binaryData = base64ToBinary(data);
         let tree = buildHuffmanTree(frequencyTable);
         let decodedValues = huffmanDecode(tree, binaryData);
-        
+
         let startDt = new Date(startDate);
-        let decodedDates = [];
+        let decodedDatesMap = new Map();
         for (let i = 0; i < decodedValues.length; i++) {
             let currentDate = new Date(startDt);
             currentDate.setDate(currentDate.getDate() + i);
-            decodedDates.push(currentDate.toISOString().split('T')[0]);
+            let currentDateString = currentDate.toISOString().split('T')[0];
+            decodedDatesMap.set(currentDateString, decodedValues[i]);
         }
-        
-        return { dates: decodedDates, values: decodedValues };
+
+        return { valuesMap: decodedDatesMap };
     }
+
 
     function encodeLocalDataToURL(baseURL) {
         let prefix = "totalAlcoholUnits-";
@@ -200,11 +202,13 @@
         // Decode the base64 to JSON
         let packedData = JSON.parse(decodeURIComponent(escape(atob(base64Data))));
         
-        let { dates, values } = decompressData({
+        let decompressedResults = decompressData({
             data: packedData.data,
             startDate: packedData.startDate,
             frequencyTable: packedData.frequencyTable
         });
+        let dates = Array.from(decompressedResults.valuesMap.keys());
+        let values = Array.from(decompressedResults.valuesMap.values());
 
         let decodedData = {};
         dates.forEach((date, index) => {
@@ -267,7 +271,9 @@
         let originalValues = [60, 124, 72];
 
         let compressed = compressData(originalDates, originalValues);
-        let { dates, values } = decompressData(compressed);
+        let decompressedResults = decompressData(compressed);
+        let dates = Array.from(decompressedResults.valuesMap.keys());
+        let values = Array.from(decompressedResults.valuesMap.values());
         // assert(JSON.stringify(dates) === JSON.stringify(originalDates) && JSON.stringify(values) === JSON.stringify(originalValues), "Data should be encoded and then decoded to its original state");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
@@ -315,7 +321,10 @@
         originalDates = ["2023-09-24"];
         originalValues = [300];
         compressed = compressData(originalDates, originalValues);
-        ({ dates, values } = decompressData(compressed));
+        decompressedResults = decompressData(compressed);
+        dates = Array.from(decompressedResults.valuesMap.keys());
+        values = Array.from(decompressedResults.valuesMap.values());
+
         // assert(dates.length === 1 && values[0] === 300, "Single date and value should be encoded and decoded correctly");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
@@ -323,7 +332,9 @@
         originalDates = ["2023-09-24"];
         originalValues = [600];
         compressed = compressData(originalDates, originalValues);
-        ({ dates, values } = decompressData(compressed));
+        decompressedResults = decompressData(compressed);
+        dates = Array.from(decompressedResults.valuesMap.keys());
+        values = Array.from(decompressedResults.valuesMap.values());
         // assert(values[0] === 600, "Maximum value should be encoded and decoded correctly");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
@@ -331,7 +342,9 @@
         originalDates = Array.from({length: 365}, (_, i) => `2023-09-${(i % 30) + 1}`);
         originalValues = Array(365).fill(600);
         compressed = compressData(originalDates, originalValues);
-        ({ dates, values } = decompressData(compressed));
+        decompressedResults = decompressData(compressed);
+        dates = Array.from(decompressedResults.valuesMap.keys());
+        values = Array.from(decompressedResults.valuesMap.values());
         // assert(values.every(v => v === 600), "All dates with maximum value should be encoded and decoded correctly");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
@@ -339,7 +352,9 @@
         originalDates = ["2025-09-24"];
         originalValues = [400];
         compressed = compressData(originalDates, originalValues);
-        ({ dates, values } = decompressData(compressed));
+        decompressedResults = decompressData(compressed);
+        dates = Array.from(decompressedResults.valuesMap.keys());
+        values = Array.from(decompressedResults.valuesMap.values());
         // assert(dates[0] === "2025-09-24" && values[0] === 400, "Future year data should be encoded and decoded correctly");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
@@ -348,7 +363,9 @@
         originalValues = [];
         compressed = compressData(originalDates, originalValues);
         ({ startDate, data } = compressData(originalDates, originalValues));
-        ({ dates, values } = decompressData(compressed));
+        decompressedResults = decompressData(compressed);
+        dates = Array.from(decompressedResults.valuesMap.keys());
+        values = Array.from(decompressedResults.valuesMap.values());
         // assert(data === '', "No data should return an empty encoded string");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
@@ -364,7 +381,9 @@
         originalDates = randomDates;
         originalValues = randomValues;
         compressed = compressData(originalDates, originalValues);
-        ({ dates, values } = decompressData(compressed));
+        decompressedResults = decompressData(compressed);
+        dates = Array.from(decompressedResults.valuesMap.keys());
+        values = Array.from(decompressedResults.valuesMap.values());
         // assert(JSON.stringify(dates.sort()) === JSON.stringify(originalDates.sort()) && JSON.stringify(values.sort()) === JSON.stringify(originalValues.sort()), "Random dates and values should be encoded and then decoded to its original state");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
