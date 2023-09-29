@@ -299,7 +299,7 @@
         console.log("Encoded URL:", encodedURL);
 
         // Decoding Test
-        decodedData = decodeURLToLocalData(encodedURL);
+        let decodedData = decodeURLToLocalData(encodedURL);
         assert(decodedData["totalAlcoholUnits-2023-11-05"] === 400, "Decoding: Value for '2023-11-05' should be 400 in decoded data from URL");
 
         // Test: Step by step compression for the specific date "2023-11-05"
@@ -360,7 +360,7 @@
         encodedURL = encodeLocalDataToURL(baseURL, originalDates, originalValues); // Adjusting to pass original dates and values
         console.log("Encoded URL:", encodedURL);
 
-        let decodedData = decodeURLToLocalData(encodedURL);
+        decodedData = decodeURLToLocalData(encodedURL);
         console.log("Decoded Data:", decodedData);
 
         let errorKey = "totalAlcoholUnits-2023-11-05";
