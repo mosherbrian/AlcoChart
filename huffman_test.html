@@ -329,6 +329,9 @@
 
         // If the above assert passed, then we can safely test the contents
         if (decompressedData && dates && values) {
+            console.log("Decompressed Dates:", dates);
+            console.log("Decompressed Values:", values);
+            console.log("Value for '2023-11-05':", values[dates.indexOf("2023-11-05")]);
             assert(dates.includes("2023-11-05"), "'2023-11-05' should be present in decompressed data");
             assert(values[dates.indexOf("2023-11-05")] === 400, "Value for '2023-11-05' should be 400 in decompressed data");
         }
