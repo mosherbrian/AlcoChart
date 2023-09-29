@@ -158,7 +158,7 @@
         if (!startDate || !data || data.length === 0) {
             return { valuesMap: new Map() };
         }        
-        
+
         let binaryData = base64ToBinary(data);
         let tree = buildHuffmanTree(frequencyTable);
         let decodedValues = huffmanDecode(tree, binaryData);
@@ -223,13 +223,16 @@
 
         // Convert packedData to base64
         let base64Encoded = btoa(unescape(encodeURIComponent(JSON.stringify(packedData))));
-        return `${baseURL}?data=${base64Encoded}`;
+        return `${baseURL}#data=${base64Encoded}`;
     }    
 
     function decodeURLToLocalData(url) {
         let parsedURL = new URL(url);
-        let base64Data = parsedURL.searchParams.get("data");
-        
+        let hashData = parsedURL.hash.substr(1);  // Remove the leading '#'
+    
+        let params = new URLSearchParams(hashData);
+        let base64Data = params.get("data");        
+
         // Decode the base64 to JSON
         let packedData = JSON.parse(decodeURIComponent(escape(atob(base64Data))));
         
