@@ -280,15 +280,15 @@
         // Compression Test
         compressed = compressData(["2023-11-05"], [400]);
         assert(compressed.startDate === "2023-11-05", "Compression: Start date should be '2023-11-05'");
-        let decompressedMap = decompressData(compressed);
+        decompressedData = decompressData(compressed);
+
+        // Check if decompressedData has the property valuesMap
+        assert(decompressedData && decompressedData.valuesMap, "Decompressed data should have a valuesMap property.");
+
+        decompressedMap = decompressedData.valuesMap;
 
         // Check if decompressedMap is of type Map and contains the right data.
-        assert(decompressedMap instanceof Map, "Decompressed data should be a Map.");
-        assert(decompressedMap.has("2023-11-05"), "Decompressed data map should have the date 2023-11-05.");
-        assert(decompressedMap.get("2023-11-05") === 400, `Expected 400, but got ${decompressedMap.get("2023-11-05")} for key 2023-11-05.`);
-
-        // Check if decompressedMap is of type Map and contains the right data.
-        assert(decompressedMap instanceof Map, "Decompressed data should be a Map.");
+        assert(decompressedMap instanceof Map, "valuesMap property should be a Map.");
         assert(decompressedMap.has("2023-11-05"), "Decompressed data map should have the date 2023-11-05.");
         assert(decompressedMap.get("2023-11-05") === 400, `Expected 400, but got ${decompressedMap.get("2023-11-05")} for key 2023-11-05.`);
 
