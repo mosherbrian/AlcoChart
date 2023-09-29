@@ -299,6 +299,29 @@
         // assert(JSON.stringify(dates) === JSON.stringify(originalDates) && JSON.stringify(values) === JSON.stringify(originalValues), "Data should be encoded and then decoded to its original state");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
+        // Test: Step by step compression for the specific date "2023-11-05"
+        originalDates = ["2023-09-01", "2023-10-01", "2023-11-05", "2023-12-01"];
+        originalValues = [10, 20, 400, 30];
+
+        // Check date generation
+        let allDatesMap = generateAllDatesMap(originalDates[0], originalDates[originalDates.length - 1]);
+        assert(allDatesMap.has("2023-11-05"), "All dates map should contain '2023-11-05'");
+
+        // Check filling values
+        fillValuesIntoDateMap(originalDates, originalValues, allDatesMap);
+        assert(allDatesMap.get("2023-11-05") === 400, "All dates map should have a value of 400 for '2023-11-05'");
+
+        // Check Huffman compression
+        let fullValues = Array.from(allDatesMap.values());
+        let frequencyTable = buildFrequencyTable(fullValues);
+        let tree = buildHuffmanTree(frequencyTable);
+        let encodedValues = huffmanEncode(tree, fullValues);
+        let base64Encoded = binaryToBase64(encodedValues);
+
+        let decompressedData = decompressData({ startDate: originalDates[0], data: base64Encoded, frequencyTable: frequencyTable });
+        assert(decompressedData.dates.includes("2023-11-05"), "'2023-11-05' should be present in decompressed data");
+        assert(decompressedData.values[decompressedData.dates.indexOf("2023-11-05")] === 400, "Value for '2023-11-05' should be 400 in decompressed data");
+
         // Test URL Encoding and Decoding for Nov 5, 2023
         {
             let testDate = "2023-11-05";
