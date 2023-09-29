@@ -228,6 +228,27 @@
         let passed = 0;
         let failed = 0;
 
+        function runDebugTests() {
+            // Test data
+            let testDates = ["2023-11-05"];
+            let testValues = [537];
+
+            // 1. Test for Compression
+            let compressed = compressData(testDates, testValues);
+            assert(compressed.datesMap["2023-11-05"] === 537, "Compression Test: Date 2023-11-05 should compress correctly");
+
+            // 2. Test for URL Encoding
+            let baseURL = "https://www.example.com";
+            let encodedURL = encodeLocalDataToURL(baseURL, testDates, testValues);
+            assert(encodedURL.includes("2023-11-05"), "URL Encoding Test: Encoded URL should contain 2023-11-05");
+
+            // 3. Test for URL Decoding
+            let decodedData = decodeURLToLocalData(encodedURL);
+            assert(decodedData["totalAlcoholUnits-2023-11-05"] === 537, "URL Decoding Test: Date 2023-11-05 should decode correctly");
+
+            console.log("Debug Tests Completed");
+        }
+
         function assert(condition, message) {
             if (condition) {
                 passed++;
