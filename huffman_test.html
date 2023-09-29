@@ -104,24 +104,33 @@
         return binary;
     }
 
-    function compressData(dates, values) {
-        // Convert dates and values into a dateValueMap
-        let dateValueMap = new Map();
-        dates.forEach((date, i) => {
-            dateValueMap.set(date, values[i]);
-        });
-
-        // Generate list of all days from first to last date, storing them in a new map with default values of 0
-        let startDate = new Date(dates[0] + "T00:00:00Z");
-        let endDate = new Date(dates[dates.length - 1] + "T00:00:00Z");
+    // Generates list of all days from first to last date in a Map structure
+    function generateAllDatesMap(startDateStr, endDateStr) {
+        let startDate = new Date(startDateStr + "T00:00:00Z");
+        let endDate = new Date(endDateStr + "T00:00:00Z");
         let allDatesMap = new Map();
         while (startDate <= endDate) {
             let dateStr = startDate.toISOString().split('T')[0];
-            allDatesMap.set(dateStr, dateValueMap.get(dateStr) || 0);
+            allDatesMap.set(dateStr, 0);
             startDate.setUTCDate(startDate.getUTCDate() + 1);
         }
+        return allDatesMap;
+    }
 
-        // Flatten the values to prepare for encoding
+    // Matches data points with dates, filling in missing points with zero
+    function fillValuesIntoDateMap(dates, values, allDatesMap) {
+        dates.forEach((date, i) => {
+            if (allDatesMap.has(date)) {
+                allDatesMap.set(date, values[i]);
+            }
+        });
+        return allDatesMap;
+    }
+
+    function compressData(dates, values) {
+        let allDatesMap = generateAllDatesMap(dates[0], dates[dates.length - 1]);
+        fillValuesIntoDateMap(dates, values, allDatesMap);
+
         let fullValues = Array.from(allDatesMap.values());
 
         let frequencyTable = buildFrequencyTable(fullValues);
