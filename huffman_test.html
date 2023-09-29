@@ -277,6 +277,22 @@
         // assert(JSON.stringify(dates) === JSON.stringify(originalDates) && JSON.stringify(values) === JSON.stringify(originalValues), "Data should be encoded and then decoded to its original state");
         assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
 
+        // Compression Test
+        compressed = compressData(["2023-11-05"], [400]);
+        assert(compressed.startDate === "2023-11-05", "Compression: Start date should be '2023-11-05'");
+        let decompressed = decompressData(compressed);
+        assert(decompressed.dates.includes("2023-11-05"), "Compression: '2023-11-05' should be present in decompressed data");
+        assert(decompressed.values[decompressed.dates.indexOf("2023-11-05")] === 400, "Compression: Value for '2023-11-05' should be 400 in decompressed data");
+
+        // Encoding Test
+        encodedURL = encodeLocalDataToURL("https://www.example.com", ["2023-11-05"], [400]);
+        // We'll just print the URL to the console for visual inspection
+        console.log("Encoded URL:", encodedURL);
+
+        // Decoding Test
+        decodedData = decodeURLToLocalData(encodedURL);
+        assert(decodedData["totalAlcoholUnits-2023-11-05"] === 400, "Decoding: Value for '2023-11-05' should be 400 in decoded data from URL");
+
         // Test: Step by step compression for the specific date "2023-11-05"
         originalDates = ["2023-09-01", "2023-10-01", "2023-11-05", "2023-12-01"];
         originalValues = [10, 20, 400, 30];
@@ -305,7 +321,7 @@
             assert(decompressedData.dates.includes("2023-11-05"), "'2023-11-05' should be present in decompressed data");
             assert(decompressedData.values[decompressedData.dates.indexOf("2023-11-05")] === 400, "Value for '2023-11-05' should be 400 in decompressed data");
         }
-        
+
         // Test URL Encoding and Decoding for Nov 5, 2023
         {
             let testDate = "2023-11-05";
