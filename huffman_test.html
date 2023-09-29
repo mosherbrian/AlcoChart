@@ -294,7 +294,7 @@
         assert(decompressedMap.get("2023-11-05") === 400, `Expected 400, but got ${decompressedMap.get("2023-11-05")} for key 2023-11-05.`);
 
         // Encoding Test
-        encodedURL = encodeLocalDataToURL("https://www.example.com", ["2023-11-05"], [400]);
+        let encodedURL = encodeLocalDataToURL("https://www.example.com", ["2023-11-05"], [400]);
         // We'll just print the URL to the console for visual inspection
         console.log("Encoded URL:", encodedURL);
 
@@ -357,7 +357,7 @@
         console.log("Compressed Data for 2023-11-05:", compressed);
 
         let baseURL = "https://www.example.com";
-        let encodedURL = encodeLocalDataToURL(baseURL, originalDates, originalValues); // Adjusting to pass original dates and values
+        encodedURL = encodeLocalDataToURL(baseURL, originalDates, originalValues); // Adjusting to pass original dates and values
         console.log("Encoded URL:", encodedURL);
 
         let decodedData = decodeURLToLocalData(encodedURL);
