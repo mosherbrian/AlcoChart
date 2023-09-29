@@ -280,7 +280,8 @@
         // Compression Test
         compressed = compressData(["2023-11-05"], [400]);
         assert(compressed.startDate === "2023-11-05", "Compression: Start date should be '2023-11-05'");
-        decompressedData = decompressData(compressed);
+
+        let decompressedData = decompressData(compressed);
 
         // Check if decompressedData has the property valuesMap
         assert(decompressedData && decompressedData.valuesMap, "Decompressed data should have a valuesMap property.");
@@ -320,7 +321,7 @@
         let encodedValues = huffmanEncode(tree, fullValues);
         let base64Encoded = binaryToBase64(encodedValues);
 
-        let decompressedData = decompressData({ startDate: originalDates[0], data: base64Encoded, frequencyTable: frequencyTable });
+        decompressedData = decompressData({ startDate: originalDates[0], data: base64Encoded, frequencyTable: frequencyTable });
         dates = Array.from(decompressedData.valuesMap.keys());
         values = Array.from(decompressedData.valuesMap.values());
         // Check if decompressed data has dates and values
