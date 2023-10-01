@@ -81,14 +81,14 @@
                     zeroRunCount++;
                 }
 
-                // If this is the last entry or there is a gap in dates, encode the zero run
-                if (!nextDate || Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
-                    let daysGap = nextDate ? Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1 : 0;
-                    zeroRunCount += daysGap;
-                    if (zeroRunCount > 0) {
-                        encodedValues.push(encodeRunLength(zeroRunCount));
-                        zeroRunCount = 0;
-                    }
+                // Check for gaps (missing days)
+                if (nextDate && Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
+                    zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
+                }
+
+                if (zeroRunCount > 0 && (!nextDate || (nextDate && Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1))) {
+                    encodedValues.push(encodeRunLength(zeroRunCount));
+                    zeroRunCount = 0;
                 }
             });
 
