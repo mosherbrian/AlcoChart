@@ -136,6 +136,55 @@
                 });            
             }
         }
+
+        function testCombinatorialDates() {
+
+            function getCombinations(prefix, depth) {
+                if (depth === 0) return [prefix];
+
+                const states = ['N', 'Z', 'M'];
+                let combinations = [];
+                for (let state of states) {
+                    combinations = combinations.concat(getCombinations(prefix + state, depth - 1));
+                }
+
+                return combinations;
+            }
+
+            function runTestForSequence(sequence) {
+                setup();
+                const dates = ["2023-01-01", "2023-01-02", "2023-01-03", "2023-01-04"];
+
+                sequence.split('').forEach((state, index) => {
+                    if (state === 'N') {
+                        localStorage.setItem(`totalAlcoholUnits-${dates[index]}`, "150");
+                    } else if (state === 'Z') {
+                        localStorage.setItem(`totalAlcoholUnits-${dates[index]}`, "0");
+                    }
+                    // If state is 'M', we do nothing for missing
+                });
+
+                const encodedURL = encodeLocalDataToURL("https://www.example.com");
+                setup();  // Clear after encoding
+                decodeURLToLocalData(encodedURL);
+
+                sequence.split('').forEach((state, index) => {
+                    if (state === 'N') {
+                        assert(localStorage.getItem(`totalAlcoholUnits-${dates[index]}`) == "150", `Test for sequence ${sequence} on ${dates[index]}`);
+                    } else if (state === 'Z') {
+                        assert(localStorage.getItem(`totalAlcoholUnits-${dates[index]}`) == "0", `Test for sequence ${sequence} on ${dates[index]}`);
+                    } else {
+                        assert(!localStorage.getItem(`totalAlcoholUnits-${dates[index]}`), `Test for sequence ${sequence} on ${dates[index]}`);
+                    }
+                });
+            }
+
+            const allSequences = getCombinations('', 4);
+
+            allSequences.forEach(sequence => {
+                runTestForSequence(sequence);
+            });
+        }
         
         function testSingleValue() {
             const testData = [
