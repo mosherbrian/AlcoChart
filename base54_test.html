@@ -51,6 +51,7 @@
         let zeroRunCount = 0;
 
         dataEntries.forEach((entry, index) => {
+                console.log("Processing entry:", entry);
                 let currentDate = new Date(Date.UTC(
                     parseInt(entry.date.split('-')[0], 10),
                     parseInt(entry.date.split('-')[1], 10) - 1,
@@ -165,7 +166,7 @@
                 });
 
                 const encodedURL = encodeLocalDataToURL("https://www.example.com");
-                console.log(encodedURL);
+                console.log(encodedURL)
                 decodeURLToLocalData(encodedURL);
 
                 sequence.split('').forEach((state, index) => {
