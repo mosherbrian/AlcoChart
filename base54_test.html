@@ -162,10 +162,114 @@
             console.log("testRunWithZero passed");
         }
 
+        function testMissingValues() {
+            const testData = [
+                { date: "2023-01-01", value: 150 },
+                { date: "2023-01-03", value: 250 }
+            ];
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testMissingValues for 2023-01-01");
+            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-02"), "testMissingValues for 2023-01-02 (should be missing)");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-03") == "250", "testMissingValues for 2023-01-03");
+            console.log("testMissingValues passed");
+        }
+
+        function testLongRunWithZero() {
+            const testData = [
+                { date: "2023-01-01", value: 150 },
+                { date: "2023-01-02", value: 0 },
+                { date: "2023-01-03", value: 0 },
+                { date: "2023-01-04", value: 0 },
+                { date: "2023-01-05", value: 250 }
+            ];
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testLongRunWithZero for 2023-01-01");
+            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-02"), "testLongRunWithZero for 2023-01-02 (should be 0)");
+            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-03"), "testLongRunWithZero for 2023-01-03 (should be 0)");
+            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-04"), "testLongRunWithZero for 2023-01-04 (should be 0)");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-05") == "250", "testLongRunWithZero for 2023-01-05");
+            console.log("testLongRunWithZero passed");
+        }
+
+        function testEdgeCases() {
+            // Test smallest and largest possible value
+            const testData = [
+                { date: "2023-01-01", value: 0 },
+                { date: "2023-01-02", value: 999 }
+            ];
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-01"), "testEdgeCases for 2023-01-01 (should be 0)");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-02") == "999", "testEdgeCases for 2023-01-02");
+            console.log("testEdgeCases passed");
+        }
+
+        function testYearWithDSTAndMissingValues() {
+            // First, generate an array of 365 dates starting from 2023-01-01
+            const startDate = new Date("2023-01-01");
+            let dates = [];
+            for (let i = 0; i < 365; i++) {
+                let currentDate = new Date(startDate);
+                currentDate.setDate(currentDate.getDate() + i);
+                dates.push(currentDate.toISOString().slice(0, 10));
+            }
+
+            // Set DST change dates
+            const dstStart = "2023-03-12"; // second Sunday of March
+            const dstEnd = "2023-11-05"; // first Sunday of November
+
+            // Now, randomly leave out about 20% of the dates, making them missing values.
+            let numToLeaveOut = 365 - 292; // 73 days
+            let missingDates = [];
+            while (numToLeaveOut > 0) {
+                let randomIndex = Math.floor(Math.random() * dates.length);
+                if (dates[randomIndex] !== dstStart && dates[randomIndex] !== dstEnd) {
+                    missingDates.push(dates.splice(randomIndex, 1)[0]);
+                    numToLeaveOut--;
+                }
+            }
+
+            // Generate values for the remaining dates
+            let testData = dates.map(date => {
+                if (date === dstStart || date === dstEnd) {
+                    return { date, value: 555 }; // Special value for DST change dates
+                }
+                // Else, either a random value or zero
+                let value = Math.random() < 0.1 ? 0 : Math.floor(Math.random() * 1000);
+                return { date, value };
+            });
+
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+
+            // Assertions
+            testData.forEach(data => {
+                assert(localStorage.getItem("totalAlcoholUnits-" + data.date) == data.value.toString(), `testYearWithDSTAndMissingValues for ${data.date}`);
+            });
+            missingDates.forEach(date => {
+                assert(!localStorage.getItem("totalAlcoholUnits-" + date), `testYearWithDSTAndMissingValues for missing date ${date}`);
+            });
+            console.log("testYearWithDSTAndMissingValues passed");
+        }
+        
         // Execute tests
         testSingleValue();
         testMultipleValues();
         testRunWithZero();
+        testMissingValues();
+        testLongRunWithZero();
+        testEdgeCases();
+        testYearWithDSTAndMissingValues();
 
         console.log("Tests Completed.");
     }
