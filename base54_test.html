@@ -113,7 +113,7 @@
 
         function setup(dataArray) {
             localStorage.clear();
-            if (dataArray.length > 0) {
+            if (dataArray) {
                 dataArray.forEach(entry => {
                     localStorage.setItem("totalAlcoholUnits-" + entry.date, entry.value.toString());
                 });            
