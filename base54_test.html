@@ -43,7 +43,7 @@
                 dataEntries.push({ date, value });
             }
         }
-        
+
         if (dataEntries.length === 0) {
             // Handle the scenario when no data entries exist.
             console.warn("No data entries found to encode.");
@@ -102,6 +102,12 @@
     function decodeURLToLocalData(url) {
         let fragment = new URL(url).hash.slice(1);
         let [startDate, encodedData] = fragment.split(",");
+
+        if (!encodedData || encodedData.length === 0) {
+            // Handle the scenario when no encoded data entries exist.
+            console.warn("No data entries found to decode.");
+            return;
+        }
 
         let currentDate = new Date(Date.UTC(
             parseInt(startDate.split('-')[0], 10),
