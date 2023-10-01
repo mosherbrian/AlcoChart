@@ -72,20 +72,31 @@
 
                 // Handling the current entry
                 if (entry.value !== 0) {
+                    // If there are any accumulated zeros, encode them now
+                    if (zeroRunCount > 0) {
+                        encodedValues.push(encodeRunLength(zeroRunCount));
+                        zeroRunCount = 0; // reset
+                    }
                     encodedValues.push(entry.value.toString().padStart(3, '0'));
                 } else {
                     zeroRunCount++;
                 }
 
                 // Check for gaps (missing days)
-                if (nextDate && Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
-                    zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
-                }
-
-                // After handling zero values and gaps, encode accumulated zero run
-                if (zeroRunCount > 0) {
-                    encodedValues.push(encodeRunLength(zeroRunCount));
-                    zeroRunCount = 0;
+                if (nextDate) {
+                    const gap = Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
+                    if (gap > 0) {
+                        zeroRunCount += gap;
+                        if (dataEntries[index + 1].value !== 0) { // Next day's value is not zero
+                            encodedValues.push(encodeRunLength(zeroRunCount));
+                            zeroRunCount = 0; // reset
+                        }
+                    }
+                } else {
+                    // No next date, this means it's the last entry, so if there's an accumulated zero run, encode it
+                    if (zeroRunCount > 0) {
+                        encodedValues.push(encodeRunLength(zeroRunCount));
+                    }
                 }
             });
 
