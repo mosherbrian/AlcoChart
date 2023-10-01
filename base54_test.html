@@ -112,17 +112,21 @@
             }
         }
 
-        function setup() {
+        function setup(dataEntries) {
             localStorage.clear();
+            for (const entry of dataEntries) {
+                localStorage.setItem("totalAlcoholUnits-" + entry.date, entry.value);
+            }
         }
 
         function testBasicEncodingDecoding() {
-            setup();
 
             let originalData = [
                 { date: "2023-01-01", value: 150 },
                 { date: "2023-01-02", value: 250 }
             ];
+            setup(originalData);
+
             let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
             let decoded = decodeURLToLocalData(encoded);
 
@@ -130,11 +134,11 @@
         }
 
         function testMissingData() {
-            setup();
-
             let originalData = [
                 { date: "2023-01-01", value: 150 }
             ];
+            setup(originalData);
+
             let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
             let decoded = decodeURLToLocalData(encoded);
 
@@ -142,12 +146,12 @@
         }
 
         function testRunLengthEncoding() {
-            setup();
-
             let originalData = [
                 { date: "2023-01-01", value: 150 },
                 { date: "2023-01-04", value: 150 }
             ];
+            setup(originalData);
+
             let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
             let decoded = decodeURLToLocalData(encoded);
 
@@ -155,9 +159,9 @@
         }
 
         function testLargeData() {
-            setup();
-
             let originalData = [];
+            setup(originalData);
+            
             for (let i = 1; i <= 365; i++) {
                 originalData.push({ date: `2023-${String(i).padStart(2, '0')}-01`, value: Math.floor(Math.random() * 700) });
             }
