@@ -43,40 +43,44 @@
                 dataEntries.push({ date, value });
             }
         }
+
         dataEntries.sort((a, b) => a.date.localeCompare(b.date));
         let startDate = dataEntries[0].date;
 
         let encodedValues = [];
         let zeroRunCount = 0;
-        dataEntries.forEach((entry, index) => {
-            let currentDate = new Date(Date.UTC(
-                parseInt(entry.date.split('-')[0], 10),
-                parseInt(entry.date.split('-')[1], 10) - 1,
-                parseInt(entry.date.split('-')[2], 10)
-            ));
-            let nextDate = index < dataEntries.length - 1 ? new Date(Date.UTC(
-                parseInt(dataEntries[index + 1].date.split('-')[0], 10),
-                parseInt(dataEntries[index + 1].date.split('-')[1], 10) - 1,
-                parseInt(dataEntries[index + 1].date.split('-')[2], 10)
-            )) : null;
 
-            if (entry.value !== 0) {
-                if (zeroRunCount > 0) {
+        dataEntries.forEach((entry, index) => {
+                let currentDate = new Date(Date.UTC(
+                    parseInt(entry.date.split('-')[0], 10),
+                    parseInt(entry.date.split('-')[1], 10) - 1,
+                    parseInt(entry.date.split('-')[2], 10)
+                ));
+
+                let nextDate = index < dataEntries.length - 1 ? new Date(Date.UTC(
+                    parseInt(dataEntries[index + 1].date.split('-')[0], 10),
+                    parseInt(dataEntries[index + 1].date.split('-')[1], 10) - 1,
+                    parseInt(dataEntries[index + 1].date.split('-')[2], 10)
+                )) : null;
+
+                if (entry.value !== 0) {
+                    if (zeroRunCount > 0) {
+                        encodedValues.push(encodeRunLength(zeroRunCount));
+                        zeroRunCount = 0;
+                    }
+                    encodedValues.push(entry.value.toString().padStart(3, '0'));
+                } else {
+                    zeroRunCount++;
+                }
+
+                // Check for gaps (missing days)
+                if (nextDate && Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
+                    zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
                     encodedValues.push(encodeRunLength(zeroRunCount));
                     zeroRunCount = 0;
                 }
-                encodedValues.push(entry.value.toString().padStart(3, '0'));
-            } else {
-                zeroRunCount++;
-            }
+            });
 
-            // Check for gaps (missing days)
-            if (nextDate && ((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
-                zeroRunCount += (nextDate - currentDate) / (1000 * 60 * 60 * 24) - 1;
-                encodedValues.push(encodeRunLength(zeroRunCount));
-                zeroRunCount = 0;
-            }
-        });
         if (zeroRunCount > 0) {
             encodedValues.push(encodeRunLength(zeroRunCount));
         }
