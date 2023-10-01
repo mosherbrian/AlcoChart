@@ -102,393 +102,83 @@
     }
 
     function runTests() {
-        const testResults = document.getElementById('testResults');
-        let passed = 0;
-        let failed = 0;
+        console.log("Starting Tests...");
 
         function assert(condition, message) {
-            if (condition) {
-                passed++;
-                testResults.innerHTML += `<div style="color: green;">PASS: ${message}</div>`;
+            if (!condition) {
+                console.error("❌", message);
             } else {
-                failed++;
-                testResults.innerHTML += `<div style="color: red;">FAIL: ${message}</div>`;
+                console.log("✅", message);
             }
         }
 
-        function assertDecompressedMatchesOriginal(decompressedDates, decompressedValues, originalDates, originalValues) {
-            for (let i = 0; i < decompressedDates.length; i++) {
-                let date = decompressedDates[i];
-                let index = originalDates.indexOf(date);
-
-                if (index !== -1) {
-                    // Date was in original data
-                    assert(decompressedValues[i] === originalValues[index], `Value for date ${date} should be ${originalValues[index]} but was ${decompressedValues[i]}`);
-                } else {
-                    // Date was not in original data, should be 0
-                    assert(decompressedValues[i] === 0, `Value for date ${date} should be 0 but was ${decompressedValues[i]}`);
-                }
-            }
-        }
-        
-        // Generate 60 random dates within 2023
-        function getRandomDateIn2023() {
-            const start = new Date('2023-01-01');
-            const end = new Date('2023-12-31');
-            const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-            return randomDate.toISOString().split('T')[0];
-        }
-
-        // Generate a random value between 1 and 600
-        function getRandomValue() {
-            return Math.floor(Math.random() * 600) + 1;
-        }
-
-        // Basic Encoding and Decoding Data
-        let originalDates = ["2023-09-24", "2023-11-05", "2023-09-26"];
-        let originalValues = [60, 124, 72];
-
-        let compressed = compressData(originalDates, originalValues);
-        let decompressedResults = decompressData(compressed);
-        let dates = Array.from(decompressedResults.valuesMap.keys());
-        let values = Array.from(decompressedResults.valuesMap.values());
-        // assert(JSON.stringify(dates) === JSON.stringify(originalDates) && JSON.stringify(values) === JSON.stringify(originalValues), "Data should be encoded and then decoded to its original state");
-        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
-
-        // Compression Test
-        compressed = compressData(["2023-11-05"], [400]);
-        assert(compressed.startDate === "2023-11-05", "Compression: Start date should be '2023-11-05'");
-
-        let decompressedData = decompressData(compressed);
-
-        // Check if decompressedData has the property valuesMap
-        assert(decompressedData && decompressedData.valuesMap, "Decompressed data should have a valuesMap property.");
-
-        decompressedMap = decompressedData.valuesMap;
-
-        // Check if decompressedMap is of type Map and contains the right data.
-        assert(decompressedMap instanceof Map, "valuesMap property should be a Map.");
-        assert(decompressedMap.has("2023-11-05"), "Decompressed data map should have the date 2023-11-05.");
-        assert(decompressedMap.get("2023-11-05") === 400, `Expected 400, but got ${decompressedMap.get("2023-11-05")} for key 2023-11-05.`);
-
-        // Encoding Test
-        localStorage.setItem("totalAlcoholUnits-2023-11-05", "40");
-        let encodedURL = encodeLocalDataToURL("https://www.example.com", ["2023-11-05"], [40]);
-        // We'll just print the URL to the console for visual inspection
-        console.log("Encoded URL:", encodedURL);
-
-        // Decoding Test
-        let decodedData = decodeURLToLocalData(encodedURL);
-        console.log("Decoded Data from URL:", decodedData);
-        console.log("Decoded value for '2023-11-05':", decodedData["totalAlcoholUnits-2023-11-05"]);
-
-        assert(decodedData["totalAlcoholUnits-2023-11-05"] === 40, "Decoding: Value for '2023-11-05' should be 40 in decoded data from URL");
-
-        // Test: Step by step compression for the specific date "2023-11-05"
-        originalDates = ["2023-09-01", "2023-10-01", "2023-11-05", "2023-12-01"];
-        originalValues = [10, 20, 400, 30];
-
-        // Check date generation
-        let allDatesMap = generateAllDatesMap(originalDates[0], originalDates[originalDates.length - 1]);
-        assert(allDatesMap.has("2023-11-05"), "All dates map should contain '2023-11-05'");
-
-        // Check filling values
-        fillValuesIntoDateMap(originalDates, originalValues, allDatesMap);
-        assert(allDatesMap.get("2023-11-05") === 400, "All dates map should have a value of 400 for '2023-11-05'");
-
-        // Check Huffman compression
-        let fullValues = Array.from(allDatesMap.values());
-        let frequencyTable = buildFrequencyTable(fullValues);
-        let tree = buildHuffmanTree(frequencyTable);
-        let encodedValues = huffmanEncode(tree, fullValues);
-        let base64Encoded = binaryToBase64(encodedValues);
-
-        decompressedData = decompressData({ startDate: originalDates[0], data: base64Encoded, frequencyTable: frequencyTable });
-        dates = Array.from(decompressedData.valuesMap.keys());
-        values = Array.from(decompressedData.valuesMap.values());
-        // Check if decompressed data has dates and values
-        assert(decompressedData && dates && values, "Decompressed data should have dates and values properties.");
-
-        // If the above assert passed, then we can safely test the contents
-        if (decompressedData && dates && values) {
-            console.log("Decompressed Dates:", dates);
-            console.log("Decompressed Values:", values);
-            console.log("Value for '2023-11-05':", values[dates.indexOf("2023-11-05")]);
-            assert(dates.includes("2023-11-05"), "'2023-11-05' should be present in decompressed data");
-            assert(values[dates.indexOf("2023-11-05")] === 400, "Value for '2023-11-05' should be 400 in decompressed data");
-        }
-
-        // Test URL Encoding and Decoding for Nov 5, 2023
-        {
-            let testDate = "2023-11-05";
-            let testData = {
-                ["totalAlcoholUnits-" + testDate]: 400
-            };
-            for (let key in testData) {
-                localStorage.setItem(key, testData[key]);
-            }
-            let encodedURL = encodeLocalDataToURL("https://www.example.com");
-            let decodedData = decodeURLToLocalData(encodedURL);
-            for (let key in testData) {
-                assert(decodedData[key] === testData[key], `Expected ${testData[key]}, but got ${decodedData[key]} for key ${key} when testing URL encoding and decoding.`);
-            }
-        }
-
-        // Test: Encoding and Decoding using URLs
-        originalDates = ["2023-11-05"];
-        originalValues = [getRandomValue()];
-        localStorage.setItem("totalAlcoholUnits-2023-11-05", originalValues[0].toString());
-
-        compressed = compressData(originalDates, originalValues);
-        console.log("Compressed Data for 2023-11-05:", compressed);
-
-        let baseURL = "https://www.example.com";
-        encodedURL = encodeLocalDataToURL(baseURL, originalDates, originalValues); // Adjusting to pass original dates and values
-        console.log("Encoded URL:", encodedURL);
-
-        decodedData = decodeURLToLocalData(encodedURL);
-        console.log("Decoded Data:", decodedData);
-
-        let errorKey = "totalAlcoholUnits-2023-11-05";
-        if (decodedData[errorKey] !== originalValues[0]) {
-            console.error("URL Decoding Issue for 2023-11-05:", {
-                originalValue: originalValues[0],
-                decodedValue: decodedData[errorKey],
-                encodedURL: encodedURL
-            });
-            assert(decodedData[errorKey] === originalValues[0], `Expected ${originalValues[0]}, but got ${decodedData[errorKey]} for key ${errorKey} when testing URL encoding and decoding.`);
-        }
-
-        // Single Date and Value
-        originalDates = ["2023-09-24"];
-        originalValues = [300];
-        compressed = compressData(originalDates, originalValues);
-        decompressedResults = decompressData(compressed);
-        dates = Array.from(decompressedResults.valuesMap.keys());
-        values = Array.from(decompressedResults.valuesMap.values());
-
-        // assert(dates.length === 1 && values[0] === 300, "Single date and value should be encoded and decoded correctly");
-        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
-
-        // Maximum Value
-        originalDates = ["2023-09-24"];
-        originalValues = [600];
-        compressed = compressData(originalDates, originalValues);
-        decompressedResults = decompressData(compressed);
-        dates = Array.from(decompressedResults.valuesMap.keys());
-        values = Array.from(decompressedResults.valuesMap.values());
-        // assert(values[0] === 600, "Maximum value should be encoded and decoded correctly");
-        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
-
-        // All Dates with Maximum Value
-        originalDates = Array.from({length: 365}, (_, i) => `2023-09-${(i % 30) + 1}`);
-        originalValues = Array(365).fill(600);
-        compressed = compressData(originalDates, originalValues);
-        decompressedResults = decompressData(compressed);
-        dates = Array.from(decompressedResults.valuesMap.keys());
-        values = Array.from(decompressedResults.valuesMap.values());
-        // assert(values.every(v => v === 600), "All dates with maximum value should be encoded and decoded correctly");
-        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
-
-        // Future Year
-        originalDates = ["2025-09-24"];
-        originalValues = [400];
-        compressed = compressData(originalDates, originalValues);
-        decompressedResults = decompressData(compressed);
-        dates = Array.from(decompressedResults.valuesMap.keys());
-        values = Array.from(decompressedResults.valuesMap.values());
-        // assert(dates[0] === "2025-09-24" && values[0] === 400, "Future year data should be encoded and decoded correctly");
-        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
-
-        // No Data
-        originalDates = [];
-        originalValues = [];
-        compressed = compressData(originalDates, originalValues);
-        ({ startDate, data } = compressData(originalDates, originalValues));
-        decompressedResults = decompressData(compressed);
-        dates = Array.from(decompressedResults.valuesMap.keys());
-        values = Array.from(decompressedResults.valuesMap.values());
-        // assert(data === '', "No data should return an empty encoded string");
-        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
-
-        const uniqueRandomDates = new Set();
-        while (uniqueRandomDates.size < 60) {
-            uniqueRandomDates.add(getRandomDateIn2023());
-        }
-
-        let randomDates = [...uniqueRandomDates];
-        let randomValues = randomDates.map(() => getRandomValue());
-
-        // Test
-        originalDates = randomDates;
-        originalValues = randomValues;
-        compressed = compressData(originalDates, originalValues);
-        decompressedResults = decompressData(compressed);
-        dates = Array.from(decompressedResults.valuesMap.keys());
-        values = Array.from(decompressedResults.valuesMap.values());
-        // assert(JSON.stringify(dates.sort()) === JSON.stringify(originalDates.sort()) && JSON.stringify(values.sort()) === JSON.stringify(originalValues.sort()), "Random dates and values should be encoded and then decoded to its original state");
-        assertDecompressedMatchesOriginal(dates, values, originalDates, originalValues );
-
-        function testUrlEncodingDecoding(dates, values) {
-            // Store the data in local storage
-            dates.forEach((date, index) => {
-                localStorage.setItem("totalAlcoholUnits-" + date, values[index]);
-            });
-
-            // Encode the data to URL
-            let generatedUrl = encodeLocalDataToURL(window.location.href);
-
-            // Clear localStorage to simulate a new environment
+        function setup() {
             localStorage.clear();
-
-            // Decode the URL back to local storage
-            decodeURLToLocalData(generatedUrl);
-
-            // Extract the decoded data from local storage and compare
-            dates.forEach((date, index) => {
-                if (date === "2023-11-05") {
-                    console.debug("Nov 5, 2023");
-                }            
-
-                let storedValue = parseInt(localStorage.getItem("totalAlcoholUnits-" + date));
-                assert(storedValue === values[index], `Expected ${values[index]}, but got ${storedValue} for key totalAlcoholUnits-${date} when testing URL encoding and decoding.`);
-            });
-
-            // Clean up the local storage for the next test
-            dates.forEach(date => {
-                localStorage.removeItem("totalAlcoholUnits-" + date);
-            });
-        }            
-
-        testUrlEncodingDecoding(randomDates, randomValues);
-
-        function testGenerateAllDatesMap() {
-            let startDate = "2023-09-01";
-            let endDate = "2023-09-03";
-            let allDatesMap = generateAllDatesMap(startDate, endDate);
-            assert(allDatesMap.size === 3, "Should generate a map with 3 dates");
-            assert(allDatesMap.has("2023-09-01") && allDatesMap.get("2023-09-01") === 0, "Map should have date 2023-09-01 with value 0");
         }
 
-        function testFillValuesIntoDateMap() {
-            let allDatesMap = new Map([["2023-09-01", 0], ["2023-09-02", 0], ["2023-09-03", 0]]);
-            let dates = ["2023-09-01", "2023-09-03"];
-            let values = [50, 100];
-            fillValuesIntoDateMap(dates, values, allDatesMap);
-            assert(allDatesMap.get("2023-09-01") === 50, "Should update value for date 2023-09-01");
-            assert(allDatesMap.get("2023-09-03") === 100, "Should update value for date 2023-09-03");
-            assert(allDatesMap.get("2023-09-02") === 0, "Should not update value for date 2023-09-02");
+        function testBasicEncodingDecoding() {
+            setup();
+
+            let originalData = [
+                { date: "2023-01-01", value: 150 },
+                { date: "2023-01-02", value: 250 }
+            ];
+            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
+            let decoded = decodeURLToLocalData(encoded);
+
+            assert(decoded["2023-01-01"] === 150 && decoded["2023-01-02"] === 250, "Basic encoding and decoding test");
         }
 
-        function testCompressData() {
-            let dates = ["2023-09-01", "2023-09-03"];
-            let values = [50, 100];
-            let compressed = compressData(dates, values);
-            let expectedStartDate = "2023-09-01";
-            assert(compressed.startDate === expectedStartDate, `Expected start date to be ${expectedStartDate} but got ${compressed.startDate}`);
+        function testMissingData() {
+            setup();
+
+            let originalData = [
+                { date: "2023-01-01", value: 150 }
+            ];
+            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
+            let decoded = decodeURLToLocalData(encoded);
+
+            assert(decoded["2023-01-01"] === 150 && !decoded["2023-01-02"], "Missing data test");
         }
 
-        // Run the new tests
-        testGenerateAllDatesMap();
-        testFillValuesIntoDateMap();
-        testCompressData();
+        function testRunLengthEncoding() {
+            setup();
 
-        function testGenerateAllDatesMapForNov5() {
-            let startDate = "2023-11-01";
-            let endDate = "2023-11-07";
-            let allDatesMap = generateAllDatesMap(startDate, endDate);
-            assert(allDatesMap.size === 7, "Should generate a map with 7 dates for November test");
-            assert(allDatesMap.has("2023-11-05") && allDatesMap.get("2023-11-05") === 0, "Map should have date 2023-11-05 with value 0");
+            let originalData = [
+                { date: "2023-01-01", value: 150 },
+                { date: "2023-01-04", value: 150 }
+            ];
+            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
+            let decoded = decodeURLToLocalData(encoded);
+
+            assert(decoded["2023-01-01"] === 150 && !decoded["2023-01-02"] && !decoded["2023-01-03"] && decoded["2023-01-04"] === 150, "Run-length encoding test");
         }
 
-        function testFillValuesIntoDateMapForNov5() {
-            let allDatesMap = new Map([
-                ["2023-11-01", 0],
-                ["2023-11-02", 0],
-                ["2023-11-03", 0],
-                ["2023-11-04", 0],
-                ["2023-11-05", 0],
-                ["2023-11-06", 0],
-                ["2023-11-07", 0]
-            ]);
-            let dates = ["2023-11-02", "2023-11-05", "2023-11-07"];
-            let values = [45, 60, 80];
-            fillValuesIntoDateMap(dates, values, allDatesMap);
-            assert(allDatesMap.get("2023-11-02") === 45, "Should update value for date 2023-11-02");
-            assert(allDatesMap.get("2023-11-05") === 60, "Should update value for date 2023-11-05");
-            assert(allDatesMap.get("2023-11-07") === 80, "Should update value for date 2023-11-07");
-        }
+        function testLargeData() {
+            setup();
 
-        function testCompressDataForNov5() {
-            let dates = ["2023-11-01", "2023-11-03", "2023-11-05"];
-            let values = [50, 70, 90];
-            let compressed = compressData(dates, values);
-            let expectedStartDate = "2023-11-01";
-            assert(compressed.startDate === expectedStartDate, `Expected start date to be ${expectedStartDate} but got ${compressed.startDate}`);
-
-            let decompressed = decompressData(compressed);
-            assert(decompressed.valuesMap.get("2023-11-05") === 90, "Decompressed value for date 2023-11-05 should be 90");
-        }
-
-        // Run the new tests
-        testGenerateAllDatesMapForNov5();
-        testFillValuesIntoDateMapForNov5();
-        testCompressDataForNov5();
-
-        function generateTestData() {
-            // Step 1: Clear local storage
-            localStorage.clear();
-
-            // Step 2: Generate the data for two years
-            let startDate = new Date("2022-01-01T00:00:00Z");
-            let endDate = new Date("2023-12-31T00:00:00Z");
-            let currentDate = new Date(startDate);
-
-            let dates = [];
-            let values = [];
-
-            while (currentDate <= endDate) {
-                let dateStr = currentDate.toISOString().split('T')[0];
-
-                // 90% probability of having data for the date
-                if (Math.random() < 0.9) {
-                    dates.push(dateStr);
-                    values.push(getRandomValue());
-
-                    // Save to local storage
-                    localStorage.setItem("totalAlcoholUnits-" + dateStr, values[values.length - 1]);
-                }
-
-                currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+            let originalData = [];
+            for (let i = 1; i <= 365; i++) {
+                originalData.push({ date: `2023-${String(i).padStart(2, '0')}-01`, value: Math.floor(Math.random() * 700) });
             }
+            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
+            let decoded = decodeURLToLocalData(encoded);
 
-            return { dates, values };
+            let passedLargeDataTest = originalData.every(entry => entry.value === decoded[entry.date]);
+            assert(passedLargeDataTest, "Large data test");
         }
 
-        // Test for two years of generated data
-        console.log("Starting test for two years of generated data...");
-        testData = generateTestData();
-        baseURL = "https://www.example.com";
+        testBasicEncodingDecoding();
+        testMissingData();
+        testRunLengthEncoding();
+        testLargeData();
 
-        // Step 1: Compress and encode the data
-        encodedURL = encodeLocalDataToURL(baseURL, testData.dates, testData.values);
-        console.log("Encoded URL:", encodedURL);
+        // Add more tests as necessary...
 
-        // Step 2: Decode the URL to get the data
-        decodedData = decodeURLToLocalData(encodedURL);
-        console.log("Decoded Data:", decodedData);
-
-        // Step 3: Compare the decoded data to the original data
-        for (let i = 0; i < testData.dates.length; i++) {
-            let originalKey = "totalAlcoholUnits-" + testData.dates[i];
-            if (decodedData[originalKey] !== testData.values[i]) {
-                console.error(`Mismatch at ${testData.dates[i]}: expected ${testData.values[i]} but got ${decodedData[originalKey]}`);
-                assert(false, `Decoded value for ${testData.dates[i]} should be ${testData.values[i]}`);
-            }
-        }
-
-        testResults.innerHTML += `<div>Total Tests: ${passed + failed}, Passed: ${passed}, Failed: ${failed}</div>`;
+        console.log("Tests Completed.");
     }
+
+runTests();
 </script>
 </body>
 </html>
