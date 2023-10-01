@@ -69,13 +69,10 @@
                         zeroRunCount = 0;
                     }
                     encodedValues.push(entry.value.toString().padStart(3, '0'));
-                } else {
-                    zeroRunCount++;
                 }
 
-                // Check for gaps (missing days)
                 if (nextDate && Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
-                    zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
+                    zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24));
                     encodedValues.push(encodeRunLength(zeroRunCount));
                     zeroRunCount = 0;
                 }
