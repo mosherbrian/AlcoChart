@@ -157,7 +157,7 @@
             setup(); // Clearing after encoding
             decodeURLToLocalData(encodedURL);
             assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testRunWithZero failed for 2023-01-01");
-            assert(localStorage.getItem("totalAlcoholUnits-2023-01-02") == "0", "testRunWithZero failed for 2023-01-02");
+            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-02"), "testRunWithZero failed for 2023-01-02");
             assert(localStorage.getItem("totalAlcoholUnits-2023-01-03") == "250", "testRunWithZero failed for 2023-01-03");
             console.log("testRunWithZero passed");
         }
