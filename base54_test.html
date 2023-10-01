@@ -43,6 +43,12 @@
                 dataEntries.push({ date, value });
             }
         }
+        
+        if (dataEntries.length === 0) {
+            // Handle the scenario when no data entries exist.
+            console.warn("No data entries found to encode.");
+            return baseURL;  // Simply return the baseURL without encoding.
+        }
 
         dataEntries.sort((a, b) => a.date.localeCompare(b.date));
         let startDate = dataEntries[0].date;
