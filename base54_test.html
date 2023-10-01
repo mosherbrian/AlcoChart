@@ -38,9 +38,8 @@
         for (let i = 0; i < localStorage.length; i++) {
             let key = localStorage.key(i);
             if (key.startsWith(prefix)) {
-                let datePart = key.split('-')[1];
                 dataEntries.push({
-                    date: datePart,
+                    date: key.substring(prefix.length),
                     value: parseInt(localStorage.getItem(key))
                 });
             }
