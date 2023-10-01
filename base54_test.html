@@ -86,7 +86,8 @@
                     zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
                 }
 
-                if (zeroRunCount > 0 && (!nextDate || (nextDate && Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1))) {
+                // Only push the encoded run length when transitioning to another non-zero
+                if ((entry.value !== 0 || !nextDate) && zeroRunCount > 0) {
                     encodedValues.push(encodeRunLength(zeroRunCount));
                     zeroRunCount = 0;
                 }
