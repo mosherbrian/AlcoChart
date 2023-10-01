@@ -64,18 +64,23 @@
                     parseInt(dataEntries[index + 1].date.split('-')[2], 10)
                 )) : null;
 
+                // Handling the current entry
                 if (entry.value !== 0) {
                     if (zeroRunCount > 0) {
                         encodedValues.push(encodeRunLength(zeroRunCount));
                         zeroRunCount = 0;
                     }
                     encodedValues.push(entry.value.toString().padStart(3, '0'));
+                } else {
+                    zeroRunCount++;
                 }
 
-                if (nextDate && Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
-                    zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24));
-                    encodedValues.push(encodeRunLength(zeroRunCount));
-                    zeroRunCount = 0;
+                // If this is the last entry or there is a gap in dates, encode the zero run
+                if (!nextDate || Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
+                    if (zeroRunCount > 0) {
+                        encodedValues.push(encodeRunLength(zeroRunCount));
+                        zeroRunCount = 0;
+                    }
                 }
             });
 
