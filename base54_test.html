@@ -18,8 +18,9 @@
     function encodeRunLength(value) {
         let encoded = '';
         while (value > 0) {
-            encoded = base64chars[value % 54] + encoded;
-            value = Math.floor(value / 54);
+            let remainder = value % 54;
+            encoded = base64chars[remainder] + encoded;
+            value = (value - remainder) / 54; // Use subtraction to handle the boundaries correctly
         }
         return encoded;
     }
