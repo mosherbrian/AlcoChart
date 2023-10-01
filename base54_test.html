@@ -82,7 +82,7 @@
         if (zeroRunCount > 0) {
             encodedValues.push(encodeRunLength(zeroRunCount));
         }
-
+        console.log(`${baseURL}#${startDate},${encodedValues.join('')}`);
         return `${baseURL}#${startDate},${encodedValues.join('')}`;
     }
 
@@ -166,7 +166,6 @@
                 });
 
                 const encodedURL = encodeLocalDataToURL("https://www.example.com");
-                console.log(encodedURL)
                 decodeURLToLocalData(encodedURL);
 
                 sequence.split('').forEach((state, index) => {
