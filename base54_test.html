@@ -464,10 +464,11 @@
             decodeURLToLocalData(encodedURL);
             
             testData.forEach(data => {
+                let storedValue = localStorage.getItem(`totalAlcoholUnits-${data.date}`);
                 if (data.value === 0) {
-                    assert(!localStorage.getItem(`totalAlcoholUnits-${data.date}`), `testBoundaryRunLengths for ${data.date} expected missing`);
+                    assert(!storedValue, `testBoundaryRunLengths for ${data.date} expected missing`);
                 } else {
-                    assert(localStorage.getItem(`totalAlcoholUnits-${data.date}`) == data.value.toString(), `testBoundaryRunLengths for ${data.date}`);
+                    assert(storedValue == data.value.toString(), `testBoundaryRunLengths for ${data.date}`);
                 }
             });
             console.log("testBoundaryRunLengths passed");
