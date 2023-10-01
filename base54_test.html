@@ -105,9 +105,9 @@
 
         function assert(condition, message) {
             if (!condition) {
-                console.error("❌", message);
+                console.error("❌", message + " failed");
             } else {
-                console.log("✅", message);
+                console.log("✅", message + " passed");
             }
         }
 
@@ -128,7 +128,7 @@
             const encodedURL = encodeLocalDataToURL("https://www.example.com");
             setup(); // Clearing after encoding
             decodeURLToLocalData(encodedURL);
-            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testSingleValue failed");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testSingleValue");
             console.log("testSingleValue passed");
         }
 
@@ -141,8 +141,8 @@
             const encodedURL = encodeLocalDataToURL("https://www.example.com");
             setup(); // Clearing after encoding
             decodeURLToLocalData(encodedURL);
-            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testMultipleValues failed for 2023-01-01");
-            assert(localStorage.getItem("totalAlcoholUnits-2023-01-02") == "250", "testMultipleValues failed for 2023-01-02");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testMultipleValues for 2023-01-01");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-02") == "250", "testMultipleValues for 2023-01-02");
             console.log("testMultipleValues passed");
         }
 
@@ -156,9 +156,9 @@
             const encodedURL = encodeLocalDataToURL("https://www.example.com");
             setup(); // Clearing after encoding
             decodeURLToLocalData(encodedURL);
-            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testRunWithZero failed for 2023-01-01");
-            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-02"), "testRunWithZero failed for 2023-01-02");
-            assert(localStorage.getItem("totalAlcoholUnits-2023-01-03") == "250", "testRunWithZero failed for 2023-01-03");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testRunWithZero for 2023-01-01");
+            assert(!localStorage.getItem("totalAlcoholUnits-2023-01-02"), "testRunWithZero for 2023-01-02");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-03") == "250", "testRunWithZero for 2023-01-03");
             console.log("testRunWithZero passed");
         }
 
