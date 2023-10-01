@@ -165,7 +165,7 @@
                 });
 
                 const encodedURL = encodeLocalDataToURL("https://www.example.com");
-                setup();  // Clear after encoding
+                console.log(encodedURL);
                 decodeURLToLocalData(encodedURL);
 
                 sequence.split('').forEach((state, index) => {
