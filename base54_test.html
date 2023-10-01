@@ -38,34 +38,50 @@
         for (let i = 0; i < localStorage.length; i++) {
             let key = localStorage.key(i);
             if (key.startsWith(prefix)) {
-                dataEntries.push({
-                    date: key.substring(prefix.length),
-                    value: parseInt(localStorage.getItem(key))
-                });
+                let date = key.substring(prefix.length);
+                let value = parseInt(localStorage.getItem(key));
+                dataEntries.push({ date, value });
             }
         }
-
         dataEntries.sort((a, b) => a.date.localeCompare(b.date));
+        let startDate = dataEntries[0].date;
 
-        let encodedData = "";
-        let runLength = 0;
-        for (let entry of dataEntries) {
-            if (entry.value === 0) {
-                runLength++;
-            } else {
-                if (runLength > 0) {
-                    encodedData += encodeRunLength(runLength);
-                    runLength = 0;
+        let encodedValues = [];
+        let zeroRunCount = 0;
+        dataEntries.forEach((entry, index) => {
+            let currentDate = new Date(Date.UTC(
+                parseInt(entry.date.split('-')[0], 10),
+                parseInt(entry.date.split('-')[1], 10) - 1,
+                parseInt(entry.date.split('-')[2], 10)
+            ));
+            let nextDate = index < dataEntries.length - 1 ? new Date(Date.UTC(
+                parseInt(dataEntries[index + 1].date.split('-')[0], 10),
+                parseInt(dataEntries[index + 1].date.split('-')[1], 10) - 1,
+                parseInt(dataEntries[index + 1].date.split('-')[2], 10)
+            )) : null;
+
+            if (entry.value !== 0) {
+                if (zeroRunCount > 0) {
+                    encodedValues.push(encodeZeroRun(zeroRunCount));
+                    zeroRunCount = 0;
                 }
-                encodedData += entry.value.toString().padStart(3, '0');
+                encodedValues.push(entry.value.toString().padStart(3, '0'));
+            } else {
+                zeroRunCount++;
             }
+
+            // Check for gaps (missing days)
+            if (nextDate && ((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
+                zeroRunCount += (nextDate - currentDate) / (1000 * 60 * 60 * 24) - 1;
+                encodedValues.push(encodeZeroRun(zeroRunCount));
+                zeroRunCount = 0;
+            }
+        });
+        if (zeroRunCount > 0) {
+            encodedValues.push(encodeZeroRun(zeroRunCount));
         }
 
-        if (runLength > 0) {
-            encodedData += encodeRunLength(runLength);
-        }
-
-        return `${baseURL}#${dataEntries[0].date},${encodedData}`;
+        return `${baseURL}#${startDate},${encodedValues.join('')}`;
     }
 
     function decodeURLToLocalData(url) {
