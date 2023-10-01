@@ -62,7 +62,7 @@
 
             if (entry.value !== 0) {
                 if (zeroRunCount > 0) {
-                    encodedValues.push(encodeZeroRun(zeroRunCount));
+                    encodedValues.push(encodeRunLength(zeroRunCount));
                     zeroRunCount = 0;
                 }
                 encodedValues.push(entry.value.toString().padStart(3, '0'));
@@ -73,12 +73,12 @@
             // Check for gaps (missing days)
             if (nextDate && ((nextDate - currentDate) / (1000 * 60 * 60 * 24)) > 1) {
                 zeroRunCount += (nextDate - currentDate) / (1000 * 60 * 60 * 24) - 1;
-                encodedValues.push(encodeZeroRun(zeroRunCount));
+                encodedValues.push(encodeRunLength(zeroRunCount));
                 zeroRunCount = 0;
             }
         });
         if (zeroRunCount > 0) {
-            encodedValues.push(encodeZeroRun(zeroRunCount));
+            encodedValues.push(encodeRunLength(zeroRunCount));
         }
 
         return `${baseURL}#${startDate},${encodedValues.join('')}`;
