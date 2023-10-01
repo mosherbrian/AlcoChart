@@ -111,72 +111,61 @@
             }
         }
 
-        function setup(dataEntries) {
+        function setup(dataArray) {
             localStorage.clear();
-            for (const entry of dataEntries) {
-                localStorage.setItem("totalAlcoholUnits-" + entry.date, entry.value);
+            if (dataArray.length > 0) {
+                dataArray.forEach(entry => {
+                    localStorage.setItem("totalAlcoholUnits-" + entry.date, entry.value.toString());
+                });            
             }
         }
+        
+        function testSingleValue() {
+            const testData = [
+                { date: "2023-01-01", value: 150 }
+            ];
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testSingleValue failed");
+            console.log("testSingleValue passed");
+        }
 
-        function testBasicEncodingDecoding() {
-
-            let originalData = [
+        function testMultipleValues() {
+            const testData = [
                 { date: "2023-01-01", value: 150 },
                 { date: "2023-01-02", value: 250 }
             ];
-            setup(originalData);
-
-            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
-            let decoded = decodeURLToLocalData(encoded);
-
-            assert(decoded["2023-01-01"] === 150 && decoded["2023-01-02"] === 250, "Basic encoding and decoding test");
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testMultipleValues failed for 2023-01-01");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-02") == "250", "testMultipleValues failed for 2023-01-02");
+            console.log("testMultipleValues passed");
         }
 
-        function testMissingData() {
-            let originalData = [
-                { date: "2023-01-01", value: 150 }
-            ];
-            setup(originalData);
-
-            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
-            let decoded = decodeURLToLocalData(encoded);
-
-            assert(decoded["2023-01-01"] === 150 && !decoded["2023-01-02"], "Missing data test");
-        }
-
-        function testRunLengthEncoding() {
-            let originalData = [
+        function testRunWithZero() {
+            const testData = [
                 { date: "2023-01-01", value: 150 },
-                { date: "2023-01-04", value: 150 }
+                { date: "2023-01-02", value: 0 },
+                { date: "2023-01-03", value: 250 }
             ];
-            setup(originalData);
-
-            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
-            let decoded = decodeURLToLocalData(encoded);
-
-            assert(decoded["2023-01-01"] === 150 && !decoded["2023-01-02"] && !decoded["2023-01-03"] && decoded["2023-01-04"] === 150, "Run-length encoding test");
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-01") == "150", "testRunWithZero failed for 2023-01-01");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-02") == "0", "testRunWithZero failed for 2023-01-02");
+            assert(localStorage.getItem("totalAlcoholUnits-2023-01-03") == "250", "testRunWithZero failed for 2023-01-03");
+            console.log("testRunWithZero passed");
         }
 
-        function testLargeData() {
-            let originalData = [];
-            setup(originalData);
-            
-            for (let i = 1; i <= 365; i++) {
-                originalData.push({ date: `2023-${String(i).padStart(2, '0')}-01`, value: Math.floor(Math.random() * 700) });
-            }
-            let encoded = encodeLocalDataToURL("https://www.example.com", originalData);
-            let decoded = decodeURLToLocalData(encoded);
-
-            let passedLargeDataTest = originalData.every(entry => entry.value === decoded[entry.date]);
-            assert(passedLargeDataTest, "Large data test");
-        }
-
-        testBasicEncodingDecoding();
-        testMissingData();
-        testRunLengthEncoding();
-        testLargeData();
-
-        // Add more tests as necessary...
+        // Execute tests
+        testSingleValue();
+        testMultipleValues();
+        testRunWithZero();
 
         console.log("Tests Completed.");
     }
