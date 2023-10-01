@@ -360,6 +360,119 @@
             console.log("testYearWithDSTAndMissingValues passed");
         }
         
+        function testAllDatesMissing() {
+            const testData = [];
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            for (let i = 1; i <= 365; i++) {
+                let date = new Date(2023, 0, i).toISOString().split('T')[0];
+                assert(!localStorage.getItem(`totalAlcoholUnits-${date}`), `testAllDatesMissing for ${date}`);
+            }
+            console.log("testAllDatesMissing passed");
+        }
+
+        function testAlternatingValues() {
+            const testData = [];
+            for (let i = 1; i <= 365; i++) {
+                let date = new Date(2023, 0, i).toISOString().split('T')[0];
+                testData.push({ date: date, value: i % 2 === 0 ? 0 : 150 });
+            }
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            for (let i = 1; i <= 365; i++) {
+                let date = new Date(2023, 0, i).toISOString().split('T')[0];
+                if (i % 2 === 0) {
+                    assert(!localStorage.getItem(`totalAlcoholUnits-${date}`), `testAlternatingValues for ${date}`);
+                } else {
+                    assert(localStorage.getItem(`totalAlcoholUnits-${date}`) == "150", `testAlternatingValues for ${date}`);
+                }
+            }
+            console.log("testAlternatingValues passed");
+        }
+
+        function testTwoYearsSequential() {
+            const testData = [];
+            let value = 0;
+            for (let year = 2023; year <= 2024; year++) {
+                for (let month = 0; month < 12; month++) {
+                    let daysInMonth = new Date(year, month + 1, 0).getDate();
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        let date = new Date(year, month, day).toISOString().split('T')[0];
+                        testData.push({ date: date, value: value % 1000 });
+                        value++;
+                    }
+                }
+            }
+            
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            value = 0;
+            for (let year = 2023; year <= 2024; year++) {
+                for (let month = 0; month < 12; month++) {
+                    let daysInMonth = new Date(year, month + 1, 0).getDate();
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        let date = new Date(year, month, day).toISOString().split('T')[0];
+                        assert(localStorage.getItem(`totalAlcoholUnits-${date}`) == (value % 1000).toString(), `testTwoYearsSequential for ${date}`);
+                        value++;
+                    }
+                }
+            }
+            console.log("testTwoYearsSequential passed");
+        }
+
+        function testBoundaryRunLengths() {
+            const generateSpan = (start, days, startValue) => {
+                const span = [];
+                for (let i = 0; i < days; i++) {
+                    const date = new Date(start);
+                    date.setDate(date.getDate() + i);
+                    span.push({ date: date.toISOString().split('T')[0], value: (startValue + i) % 1000 });
+                }
+                return span;
+            };
+
+            const generateMissingRun = (start, days) => {
+                const run = [];
+                for (let i = 0; i < days; i++) {
+                    const date = new Date(start);
+                    date.setDate(date.getDate() + i);
+                    run.push({ date: date.toISOString().split('T')[0], value: 0 });
+                }
+                return run;
+            };
+
+            const startDate = new Date("2023-01-01");
+            let testData = [
+                ...generateSpan(startDate, 10, 100), 
+                ...generateMissingRun(new Date("2023-01-11"), 53),
+                ...generateSpan(new Date("2023-03-04"), 10, 200),
+                ...generateMissingRun(new Date("2023-03-14"), 54),
+                ...generateSpan(new Date("2023-05-07"), 10, 300),
+                ...generateMissingRun(new Date("2023-05-17"), 55),
+                ...generateSpan(new Date("2023-07-11"), 10, 400)
+            ];
+            
+            setup(testData);
+            const encodedURL = encodeLocalDataToURL("https://www.example.com");
+            setup(); // Clearing after encoding
+            decodeURLToLocalData(encodedURL);
+            
+            testData.forEach(data => {
+                if (data.value === 0) {
+                    assert(!localStorage.getItem(`totalAlcoholUnits-${data.date}`), `testBoundaryRunLengths for ${data.date} expected missing`);
+                } else {
+                    assert(localStorage.getItem(`totalAlcoholUnits-${data.date}`) == data.value.toString(), `testBoundaryRunLengths for ${data.date}`);
+                }
+            });
+            console.log("testBoundaryRunLengths passed");
+        }
+
         // Execute tests
         testSingleValue();
         testMultipleValues();
@@ -369,6 +482,10 @@
         testLongRunWithZero();
         testEdgeCases();
         testYearWithDSTAndMissingValues();
+        testAllDatesMissing();
+        testAlternatingValues();
+        testTwoYearsSequential();
+        testBoundaryRunLengths();
 
         console.log("Tests Completed.");
     }
