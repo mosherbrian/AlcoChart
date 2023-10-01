@@ -72,10 +72,6 @@
 
                 // Handling the current entry
                 if (entry.value !== 0) {
-                    if (zeroRunCount > 0) {
-                        encodedValues.push(encodeRunLength(zeroRunCount));
-                        zeroRunCount = 0;
-                    }
                     encodedValues.push(entry.value.toString().padStart(3, '0'));
                 } else {
                     zeroRunCount++;
@@ -86,8 +82,8 @@
                     zeroRunCount += Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
                 }
 
-                // Only push the encoded run length when transitioning to another non-zero
-                if ((entry.value !== 0 || !nextDate) && zeroRunCount > 0) {
+                // After handling zero values and gaps, encode accumulated zero run
+                if (zeroRunCount > 0) {
                     encodedValues.push(encodeRunLength(zeroRunCount));
                     zeroRunCount = 0;
                 }
