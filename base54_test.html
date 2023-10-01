@@ -140,13 +140,14 @@
     function runTests() {
         console.log("Starting Tests...");
 
-        function assert(condition, message) {
+        function assert(condition, message, detailedInfo = "") {
             if (!condition) {
-                console.error("❌", message + " failed");
+                console.error("❌", message + " failed", detailedInfo);
             } else {
                 console.log("✅", message + " passed");
             }
         }
+
 
         function setup(dataArray) {
             localStorage.clear();
@@ -339,10 +340,10 @@
 
             // Assertions
             testData.forEach(data => {
-                assert(localStorage.getItem("totalAlcoholUnits-" + data.date) == data.value.toString(), `testYearWithDSTAndMissingValues for ${data.date}`);
+                assert(localStorage.getItem("totalAlcoholUnits-" + data.date) == data.value.toString(), `testYearWithDSTAndMissingValues for ${data.date}`, `Expected: ${data.value}, Received: ${localStorage.getItem("totalAlcoholUnits-" + data.date)}`);
             });
             missingDates.forEach(date => {
-                assert(!localStorage.getItem("totalAlcoholUnits-" + date), `testYearWithDSTAndMissingValues for missing date ${date}`);
+                assert(!localStorage.getItem("totalAlcoholUnits-" + date), `testYearWithDSTAndMissingValues for missing date ${date}`, `Expected no date, Received data`);
             });
             console.log("testYearWithDSTAndMissingValues passed");
         }
