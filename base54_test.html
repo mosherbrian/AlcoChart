@@ -340,7 +340,11 @@
 
             // Assertions
             testData.forEach(data => {
-                assert(localStorage.getItem("totalAlcoholUnits-" + data.date) == data.value.toString(), `testYearWithDSTAndMissingValues for ${data.date}`, `Expected: ${data.value}, Received: ${localStorage.getItem("totalAlcoholUnits-" + data.date)}`);
+                if (data.value === 0) {
+                    assert(!localStorage.getItem("totalAlcoholUnits-" + data.date), `testYearWithDSTAndMissingValues for ${data.date} expected missing`);
+                } else {
+                    assert(localStorage.getItem("totalAlcoholUnits-" + data.date) == data.value.toString(), `testYearWithDSTAndMissingValues for ${data.date}`, `Expected: ${data.value}, Received: ${localStorage.getItem("totalAlcoholUnits-" + data.date)}`);
+                }
             });
             missingDates.forEach(date => {
                 assert(!localStorage.getItem("totalAlcoholUnits-" + date), `testYearWithDSTAndMissingValues for missing date ${date}`, `Expected no date, Received data`);
