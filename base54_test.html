@@ -97,15 +97,15 @@
         return readValueOrRun();
     }
 
-    function getContiguousDates(startDate, endDate) {
-        let start = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
-        let end = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
-        
+    function getContiguousDates(start, end) {
+        let currentDate = new Date(start);
         let dates = [];
-        while (start <= end) {
-            dates.push(new Date(start).toISOString().split('T')[0]);
-            start.setUTCDate(start.getUTCDate() + 1);
+
+        while (currentDate <= end) {
+            dates.push(currentDate.toISOString().slice(0, 10));
+            currentDate.setUTCDate(currentDate.getUTCDate() + 1);
         }
+
         return dates;
     }
 
