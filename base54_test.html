@@ -135,7 +135,7 @@
             console.warn("No data entries found to encode.");
             return baseURL; // Simply return the baseURL without encoding.
         }        
-        
+
         data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         // Create contiguous date and value arrays
@@ -156,7 +156,12 @@
     function decodeURLToLocalData(url) {
         const fragment = new URL(url).hash.slice(1);
         const [startDate, encodedData] = fragment.split(",");
-        
+
+        if (encodedData.length === 0) {
+            console.warn("No data entries found to decode.");
+            return;
+        }        
+
         const values = decodeFSM(encodedData);
         
         let currentDateStr = startDate;
