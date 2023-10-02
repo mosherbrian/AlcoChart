@@ -157,7 +157,7 @@
         const fragment = new URL(url).hash.slice(1);
         const [startDate, encodedData] = fragment.split(",");
 
-        if (encodedData.length === 0) {
+        if (!encodedData || encodedData.length === 0) {
             console.warn("No data entries found to decode.");
             return;
         }        
