@@ -149,7 +149,7 @@
 
         // Encode using FSM
         const encodedData = encodeFSM(values);
-
+        console.log(`${baseURL}#${startDate},${encodedData}`);
         return `${baseURL}#${startDate},${encodedData}`;
     }
 
