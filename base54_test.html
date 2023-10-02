@@ -130,6 +130,12 @@
                 });
             }
         }
+
+        if (data.length === 0) {
+            console.warn("No data entries found to encode.");
+            return baseURL; // Simply return the baseURL without encoding.
+        }        
+        
         data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         // Create contiguous date and value arrays
