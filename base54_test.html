@@ -12,15 +12,13 @@
 <div id="testResults"></div>
 
 <script>
-    // Our modified base64 encoding for run-length encoding of zeros/missing data
     const base64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
 
     function encodeRunLength(value) {
         let encoded = '';
         while (value > 0) {
-            let remainder = value % 54;
-            encoded = base64chars[remainder] + encoded;
-            value = (value - remainder) / 54; // Use subtraction to handle the boundaries correctly
+            encoded = base64chars[value % 54] + encoded;
+            value = Math.floor(value / 54);
         }
         return encoded;
     }
@@ -33,116 +31,134 @@
         return value;
     }
 
+    function encodeFSM(values) {
+        let encodedString = '';
+        let currentIndex = 0;
+
+        function readValue() {
+            if (currentIndex >= values.length) return encodedString;
+            if (values[currentIndex] === 0) return encodeRun();
+            else return encodeValue();
+        }
+
+        function encodeRun() {
+            let runLength = 0;
+            while (values[currentIndex] === 0 && currentIndex < values.length) {
+                runLength++;
+                currentIndex++;
+            }
+            encodedString += encodeRunLength(runLength);
+            return readValue();
+        }
+
+        function encodeValue() {
+            let value = '';
+            while (values[currentIndex] !== 0 && /^\d{0,2}$/.test(value) && currentIndex < values.length) {
+                value += values[currentIndex].toString();
+                currentIndex++;
+            }
+            encodedString += value.padStart(3, '0');
+            return readValue();
+        }
+
+        return readValue();
+    }
+
+    function decodeFSM(encoded) {
+        let decodedValues = [];
+        let currentIndex = 0;
+
+        function readValueOrRun() {
+            if (currentIndex >= encoded.length) return decodedValues;
+            if (/\d/.test(encoded[currentIndex])) return decodeValue();
+            else return decodeRun();
+        }
+
+        function decodeRun() {
+            let encodedRun = '';
+            while (!/\d/.test(encoded[currentIndex]) && currentIndex < encoded.length) {
+                encodedRun += encoded[currentIndex];
+                currentIndex++;
+            }
+            let runLength = decodeRunLength(encodedRun);
+            for (let i = 0; i < runLength; i++) {
+                decodedValues.push(0);
+            }
+            return readValueOrRun();
+        }
+
+        function decodeValue() {
+            let value = encoded.slice(currentIndex, currentIndex + 3);
+            decodedValues.push(parseInt(value, 10));
+            currentIndex += 3;
+            return readValueOrRun();
+        }
+
+        return readValueOrRun();
+    }
+
+    function getContiguousDates(startDate, endDate) {
+        let start = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
+        let end = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
+        
+        let dates = [];
+        while (start <= end) {
+            dates.push(new Date(start).toISOString().split('T')[0]);
+            start.setUTCDate(start.getUTCDate() + 1);
+        }
+        return dates;
+    }
+
+    function addDaysToDate(dateStr, daysToAdd) {
+        let date = new Date(Date.UTC(
+            parseInt(dateStr.split('-')[0], 10),
+            parseInt(dateStr.split('-')[1], 10) - 1,
+            parseInt(dateStr.split('-')[2], 10)
+        ));
+        date.setUTCDate(date.getUTCDate() + daysToAdd);
+        return date.toISOString().split('T')[0];
+    }
+
     function encodeLocalDataToURL(baseURL) {
-        let prefix = "totalAlcoholUnits-";
-        let dataEntries = [];
+        // Load from local storage and sort by date
+        let data = [];
         for (let i = 0; i < localStorage.length; i++) {
-            let key = localStorage.key(i);
-            if (key.startsWith(prefix)) {
-                let date = key.substring(prefix.length);
-                let value = parseInt(localStorage.getItem(key));
-                dataEntries.push({ date, value });
+            if (localStorage.key(i).startsWith('totalAlcoholUnits-')) {
+                data.push({
+                    date: localStorage.key(i).replace('totalAlcoholUnits-', ''),
+                    value: parseInt(localStorage.getItem(localStorage.key(i)), 10)
+                });
             }
         }
+        data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        if (dataEntries.length === 0) {
-            // Handle the scenario when no data entries exist.
-            console.warn("No data entries found to encode.");
-            return baseURL;  // Simply return the baseURL without encoding.
-        }
+        // Create contiguous date and value arrays
+        const startDate = data[0].date;
+        const endDate = data[data.length - 1].date;
+        const dates = getContiguousDates(new Date(startDate), new Date(endDate));
+        const values = dates.map(date => {
+            const entry = data.find(item => item.date === date);
+            return entry ? entry.value : 0;
+        });
 
-        dataEntries.sort((a, b) => a.date.localeCompare(b.date));
-        let startDate = dataEntries[0].date;
+        // Encode using FSM
+        const encodedData = encodeFSM(values);
 
-        let encodedValues = [];
-        let zeroRunCount = 0;
-
-        dataEntries.forEach((entry, index) => {
-                console.log("Processing entry:", entry);
-                let currentDate = new Date(Date.UTC(
-                    parseInt(entry.date.split('-')[0], 10),
-                    parseInt(entry.date.split('-')[1], 10) - 1,
-                    parseInt(entry.date.split('-')[2], 10)
-                ));
-
-                let nextDate = index < dataEntries.length - 1 ? new Date(Date.UTC(
-                    parseInt(dataEntries[index + 1].date.split('-')[0], 10),
-                    parseInt(dataEntries[index + 1].date.split('-')[1], 10) - 1,
-                    parseInt(dataEntries[index + 1].date.split('-')[2], 10)
-                )) : null;
-
-                // Handling the current entry
-                if (entry.value !== 0) {
-                    // If there are any accumulated zeros, encode them now
-                    if (zeroRunCount > 0) {
-                        encodedValues.push(encodeRunLength(zeroRunCount));
-                        zeroRunCount = 0; // reset
-                    }
-                    encodedValues.push(entry.value.toString().padStart(3, '0'));
-                } else {
-                    zeroRunCount++;
-                }
-
-                // Check for gaps (missing days)
-                if (nextDate) {
-                    const gap = Math.round((nextDate - currentDate) / (1000 * 60 * 60 * 24)) - 1;
-                    if (gap > 0) {
-                        zeroRunCount += gap;
-                        if (dataEntries[index + 1].value !== 0) { // Next day's value is not zero
-                            encodedValues.push(encodeRunLength(zeroRunCount));
-                            zeroRunCount = 0; // reset
-                        }
-                    }
-                } else {
-                    // No next date, this means it's the last entry, so if there's an accumulated zero run, encode it
-                    if (zeroRunCount > 0) {
-                        encodedValues.push(encodeRunLength(zeroRunCount));
-                    }
-                }
-            });
-
-        if (zeroRunCount > 0) {
-            encodedValues.push(encodeRunLength(zeroRunCount));
-        }
-        console.log(`${baseURL}#${startDate},${encodedValues.join('')}`);
-        return `${baseURL}#${startDate},${encodedValues.join('')}`;
+        return `${baseURL}#${startDate},${encodedData}`;
     }
 
     function decodeURLToLocalData(url) {
-        let fragment = new URL(url).hash.slice(1);
-        let [startDate, encodedData] = fragment.split(",");
-
-        if (!encodedData || encodedData.length === 0) {
-            // Handle the scenario when no encoded data entries exist.
-            console.warn("No data entries found to decode.");
-            return;
-        }
-
-        let currentDate = new Date(Date.UTC(
-            parseInt(startDate.split('-')[0], 10),
-            parseInt(startDate.split('-')[1], 10) - 1,
-            parseInt(startDate.split('-')[2], 10)
-        ));
-
-        let i = 0;
-        while (i < encodedData.length) {
-            if (/\d{3}/.test(encodedData.slice(i, i + 3))) {
-                // It's a data value
-                let value = parseInt(encodedData.slice(i, i + 3), 10);
-                let key = `totalAlcoholUnits-${currentDate.toISOString().split('T')[0]}`;
-                localStorage.setItem(key, value);
-                currentDate.setUTCDate(currentDate.getUTCDate() + 1);
-                i += 3;
-            } else {
-                // It's an encoded run-length of zeros
-                let runLength = 1;
-                while (base64chars.includes(encodedData[i + runLength])) {
-                    runLength++;
-                }
-                let numberOfZeros = decodeRunLength(encodedData.slice(i, i + runLength));
-                currentDate.setUTCDate(currentDate.getUTCDate() + numberOfZeros);
-                i += runLength;
+        const fragment = new URL(url).hash.slice(1);
+        const [startDate, encodedData] = fragment.split(",");
+        
+        const values = decodeFSM(encodedData);
+        
+        let currentDateStr = startDate;
+        for (let value of values) {
+            if (value !== 0) {
+                localStorage.setItem(`totalAlcoholUnits-${currentDateStr}`, value.toString());
             }
+            currentDateStr = addDaysToDate(currentDateStr, 1);
         }
     }
 
