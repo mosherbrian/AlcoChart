@@ -263,8 +263,25 @@
     }
 
     function updateDisplay() {
-        totalAlcoholUnits = parseInt(localStorage.getItem('totalAlcoholUnits-' + selectedDate)) || 0;
-        tallyDisplay.innerText = totalAlcoholUnits.toString();
+        const localVal = localStorage.getItem('totalAlcoholUnits-' + selectedDate);
+        if (localVal !== null) {
+            totalAlcoholUnits = parseInt(localVal) || 0;
+            tallyDisplay.innerText = totalAlcoholUnits.toString();
+        } else {
+            // Fallback: try loading from cloud KV backup
+            totalAlcoholUnits = 0;
+            tallyDisplay.innerText = '0';
+            fetch('https://nearby-bmosher.pages.dev/alco?date=' + selectedDate)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.units > 0) {
+                        totalAlcoholUnits = data.units;
+                        localStorage.setItem('totalAlcoholUnits-' + selectedDate, data.units);
+                        tallyDisplay.innerText = data.units.toString();
+                    }
+                })
+                .catch(() => {});
+        }
     }
 
     function updateShareableLink() {
