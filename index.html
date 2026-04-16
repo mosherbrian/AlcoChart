@@ -250,7 +250,7 @@
         // Sync to Cloudflare KV for ClawdBot integration
         fetch('https://nearby-bmosher.pages.dev/alco', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-Alco-Token': 'So3m33GGIx8tV2nm8n52OOvsOmBfHw_U' },
             body: JSON.stringify({ date: selectedDate, units: totalAlcoholUnits }),
         }).catch(() => {}); // Fire and forget — don't block UI
         const serializedData = serializeDataToURLParams();
@@ -271,7 +271,7 @@
             // Fallback: try loading from cloud KV backup
             totalAlcoholUnits = 0;
             tallyDisplay.innerText = '0';
-            fetch('https://nearby-bmosher.pages.dev/alco?date=' + selectedDate)
+            fetch('https://nearby-bmosher.pages.dev/alco?date=' + selectedDate + '&token=So3m33GGIx8tV2nm8n52OOvsOmBfHw_U')
                 .then(r => r.json())
                 .then(data => {
                     if (data.units > 0) {
