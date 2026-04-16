@@ -246,6 +246,13 @@
  
         // Save to localStorage with date-specific key
         localStorage.setItem('totalAlcoholUnits-' + selectedDate, totalAlcoholUnits);
+
+        // Sync to Cloudflare KV for ClawdBot integration
+        fetch('https://nearby-bmosher.pages.dev/alco', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date: selectedDate, units: totalAlcoholUnits }),
+        }).catch(() => {}); // Fire and forget — don't block UI
         const serializedData = serializeDataToURLParams();
         window.history.pushState({}, '', '?' + serializedData);
         updateShareableLink();        
