@@ -248,11 +248,14 @@
         localStorage.setItem('totalAlcoholUnits-' + selectedDate, totalAlcoholUnits);
 
         // Sync to Cloudflare KV for ClawdBot integration
-        fetch('https://nearby-bmosher.pages.dev/alco', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Alco-Token': 'So3m33GGIx8tV2nm8n52OOvsOmBfHw_U' },
-            body: JSON.stringify({ date: selectedDate, units: totalAlcoholUnits }),
-        }).catch(() => {}); // Fire and forget — don't block UI
+        const syncToken = localStorage.getItem('alco_sync_token');
+        if (syncToken) {
+            fetch('https://nearby-bmosher.pages.dev/alco', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Alco-Token': syncToken },
+                body: JSON.stringify({ date: selectedDate, units: totalAlcoholUnits }),
+            }).catch(() => {});
+        }
         const serializedData = serializeDataToURLParams();
         window.history.pushState({}, '', '?' + serializedData);
         updateShareableLink();        
@@ -271,7 +274,8 @@
             // Fallback: try loading from cloud KV backup
             totalAlcoholUnits = 0;
             tallyDisplay.innerText = '0';
-            fetch('https://nearby-bmosher.pages.dev/alco?date=' + selectedDate + '&token=So3m33GGIx8tV2nm8n52OOvsOmBfHw_U')
+            const readToken = localStorage.getItem('alco_sync_token');
+            fetch('https://nearby-bmosher.pages.dev/alco?date=' + selectedDate + '&token=' + (readToken || ''))
                 .then(r => r.json())
                 .then(data => {
                     if (data.units > 0) {
@@ -387,7 +391,36 @@
             });
     }
 
+    // Sync token setup
+    function initSyncSettings() {
+        const token = localStorage.getItem('alco_sync_token');
+        const el = document.getElementById('sync-settings');
+        if (token) {
+            el.innerHTML = '<span style="color:#999;font-size:11px">☁️ Cloud sync active <a href="#" onclick="clearSyncToken();return false" style="color:#999">clear</a></span>';
+        } else {
+            el.innerHTML = '<div style="margin-top:20px;font-size:13px;color:#666">' +
+                'Cloud sync: <input type="password" id="sync-token-input" placeholder="Enter sync token" style="font-size:13px;width:180px"> ' +
+                '<button onclick="saveSyncToken()" style="font-size:13px">Save</button></div>';
+        }
+    }
+    function saveSyncToken() {
+        const val = document.getElementById('sync-token-input').value.trim();
+        if (val) {
+            localStorage.setItem('alco_sync_token', val);
+            initSyncSettings();
+            showToast('Sync token saved');
+        }
+    }
+    function clearSyncToken() {
+        localStorage.removeItem('alco_sync_token');
+        initSyncSettings();
+        showToast('Sync token cleared');
+    }
+    initSyncSettings();
+
 </script>
+
+<div id="sync-settings" style="text-align:center;margin:20px 0"></div>
 
 </body>
 </html>
