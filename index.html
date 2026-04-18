@@ -232,6 +232,9 @@
         datePicker.value = selectedDate;
         deserializeURLParamsToData();
         loadDateTally();
+        // Sync settings UI lives in divs after this script tag; defer its
+        // first init until the DOM is ready so getElementById succeeds.
+        initSyncSettings();
     });
     
     function addToTally(alcoholContent) {
@@ -387,7 +390,7 @@
 
     // ── Cloud sync (Cloudflare KV) ──
 
-    const APP_VERSION = '2026-04-18a';
+    const APP_VERSION = '2026-04-18b';
 
     // Push one date/units pair to KV, tracking per-date sync status in
     // localStorage. Returns {status: 'synced'|'failed'|'no-token', error?}.
@@ -510,7 +513,6 @@
         initSyncSettings();
         showToast('Sync token cleared');
     }
-    initSyncSettings();
 
 </script>
 
