@@ -248,14 +248,7 @@
         localStorage.setItem('totalAlcoholUnits-' + selectedDate, totalAlcoholUnits);
 
         // Sync to Cloudflare KV for ClawdBot integration
-        const syncToken = localStorage.getItem('alco_sync_token');
-        if (syncToken) {
-            fetch('https://nearby-bmosher.pages.dev/alco', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Alco-Token': syncToken },
-                body: JSON.stringify({ date: selectedDate, units: totalAlcoholUnits }),
-            }).catch(() => {});
-        }
+        syncToCloud(selectedDate, totalAlcoholUnits).then(updateSyncIndicator);
         const serializedData = serializeDataToURLParams();
         window.history.pushState({}, '', '?' + serializedData);
         updateShareableLink();        
@@ -286,6 +279,7 @@
                 })
                 .catch(() => {});
         }
+        if (typeof updateSyncIndicator === 'function') updateSyncIndicator();
     }
 
     function updateShareableLink() {
@@ -391,17 +385,117 @@
             });
     }
 
+    // ── Cloud sync (Cloudflare KV) ──
+
+    const APP_VERSION = '2026-04-18a';
+
+    // Push one date/units pair to KV, tracking per-date sync status in
+    // localStorage. Returns {status: 'synced'|'failed'|'no-token', error?}.
+    function syncToCloud(date, units) {
+        const token = localStorage.getItem('alco_sync_token');
+        if (!token) return Promise.resolve({ status: 'no-token' });
+        const mark = (status, error) => {
+            localStorage.setItem('sync-status-' + date, status);
+            localStorage.setItem('sync-status-' + date + '-at', new Date().toISOString());
+            if (error) localStorage.setItem('sync-status-' + date + '-err', error);
+            else localStorage.removeItem('sync-status-' + date + '-err');
+        };
+        return fetch('https://nearby-bmosher.pages.dev/alco', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Alco-Token': token },
+            body: JSON.stringify({ date: date, units: units }),
+        }).then(r => {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            mark('synced');
+            return { status: 'synced' };
+        }).catch(err => {
+            mark('failed', String(err.message || err));
+            return { status: 'failed', error: String(err.message || err) };
+        });
+    }
+
+    // Push EVERY local dated entry whether or not it's been synced before.
+    // Good recovery path when a run of days silently failed to sync.
+    async function forceSyncAll() {
+        const token = localStorage.getItem('alco_sync_token');
+        if (!token) { alert('No sync token set — save one first.'); return; }
+        const entries = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (!k || !k.startsWith('totalAlcoholUnits-')) continue;
+            const date = k.substring('totalAlcoholUnits-'.length);
+            const units = parseInt(localStorage.getItem(k)) || 0;
+            if (units > 0) entries.push({ date, units });
+        }
+        entries.sort((a, b) => a.date.localeCompare(b.date));
+        const btn = document.getElementById('force-sync-btn');
+        if (btn) btn.disabled = true;
+        let ok = 0, fail = 0;
+        for (const e of entries) {
+            const r = await syncToCloud(e.date, e.units);
+            if (r.status === 'synced') ok++; else fail++;
+            if (btn) btn.textContent = `Syncing… ${ok + fail}/${entries.length}`;
+        }
+        if (btn) { btn.disabled = false; btn.textContent = 'Force sync all'; }
+        updateSyncIndicator();
+        alert(`Force sync complete: ${ok} synced, ${fail} failed (of ${entries.length} local entries with units > 0)`);
+    }
+
+    // Show sync status for the currently selected date.
+    function updateSyncIndicator() {
+        const el = document.getElementById('sync-indicator');
+        if (!el) return;
+        const token = localStorage.getItem('alco_sync_token');
+        if (!token) { el.innerHTML = '<span style="color:#999">📱 Local only</span>'; return; }
+        const status = localStorage.getItem('sync-status-' + selectedDate);
+        const at = localStorage.getItem('sync-status-' + selectedDate + '-at');
+        const err = localStorage.getItem('sync-status-' + selectedDate + '-err');
+        const when = at ? ' (' + new Date(at).toLocaleTimeString() + ')' : '';
+        if (status === 'synced') {
+            el.innerHTML = '<span style="color:#0a0">☁️ Synced' + when + '</span>';
+        } else if (status === 'failed') {
+            el.innerHTML = '<span style="color:#c00" title="' + (err || '') + '">⚠️ Sync failed' + when + ' — tap Force sync</span>';
+        } else {
+            // never attempted for this date in this browser
+            el.innerHTML = '<span style="color:#999">☁️ Not yet synced today</span>';
+        }
+    }
+
+    // Ask the registered SW to check for an updated version.
+    async function checkForUpdates() {
+        if (!('serviceWorker' in navigator)) { alert('Service worker not supported'); return; }
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (!reg) { alert('No service worker registered yet'); return; }
+        await reg.update();
+        if (reg.waiting) {
+            reg.waiting.postMessage('SKIP_WAITING');
+            alert('New version installed — reloading…');
+            location.reload();
+        } else {
+            alert('You are on the latest version (' + APP_VERSION + ').');
+        }
+    }
+
     // Sync token setup
     function initSyncSettings() {
         const token = localStorage.getItem('alco_sync_token');
         const el = document.getElementById('sync-settings');
         if (token) {
-            el.innerHTML = '<span style="color:#999;font-size:11px">☁️ Cloud sync active <a href="#" onclick="clearSyncToken();return false" style="color:#999">clear</a></span>';
+            el.innerHTML =
+                '<div style="display:flex;flex-direction:column;gap:6px;align-items:center">' +
+                '<span style="color:#999;font-size:11px">☁️ Cloud sync active <a href="#" onclick="clearSyncToken();return false" style="color:#999">clear</a></span>' +
+                '<div style="font-size:11px;color:#999">' +
+                '<button id="force-sync-btn" onclick="forceSyncAll()" style="font-size:11px">Force sync all</button> ' +
+                '<button onclick="checkForUpdates()" style="font-size:11px">Check for updates</button> ' +
+                '<span style="color:#ccc">v' + APP_VERSION + '</span>' +
+                '</div>' +
+                '</div>';
         } else {
             el.innerHTML = '<div style="margin-top:20px;font-size:13px;color:#666">' +
                 'Cloud sync: <input type="password" id="sync-token-input" placeholder="Enter sync token" style="font-size:13px;width:180px"> ' +
                 '<button onclick="saveSyncToken()" style="font-size:13px">Save</button></div>';
         }
+        updateSyncIndicator();
     }
     function saveSyncToken() {
         const val = document.getElementById('sync-token-input').value.trim();
@@ -420,6 +514,7 @@
 
 </script>
 
+<div id="sync-indicator" style="text-align:center;margin:8px 0;font-size:12px"></div>
 <div id="sync-settings" style="text-align:center;margin:20px 0"></div>
 
 </body>
