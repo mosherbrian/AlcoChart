@@ -1,7 +1,7 @@
 // Bump CACHE_VERSION whenever index.html or manifest changes.
 // Network-first for HTML so users see updates promptly when online;
 // cache-first for static assets.
-const CACHE_VERSION = 'alcochart-v3';
+const CACHE_VERSION = 'alcochart-v4';
 const STATIC_ASSETS = ['/', 'index.html', 'manifest.json', 'icon.png'];
 
 self.addEventListener('install', function (event) {

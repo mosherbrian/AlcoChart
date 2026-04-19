@@ -390,7 +390,7 @@
 
     // ── Cloud sync (Cloudflare KV) ──
 
-    const APP_VERSION = '2026-04-18b';
+    const APP_VERSION = '2026-04-19a';
 
     // Push one date/units pair to KV, tracking per-date sync status in
     // localStorage. Returns {status: 'synced'|'failed'|'no-token', error?}.
@@ -457,7 +457,12 @@
         if (status === 'synced') {
             el.innerHTML = '<span style="color:#0a0">☁️ Synced' + when + '</span>';
         } else if (status === 'failed') {
-            el.innerHTML = '<span style="color:#c00" title="' + (err || '') + '">⚠️ Sync failed' + when + ' — tap Force sync</span>';
+            // Show the error detail inline — iOS doesn't surface title tooltips
+            // and we need the actual text for debugging.
+            const safeErr = (err || 'no detail').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            el.innerHTML =
+                '<div style="color:#c00">⚠️ Sync failed' + when + ' — tap Force sync</div>' +
+                '<div style="color:#900;font-size:10px;margin-top:2px;font-family:monospace;word-break:break-all">' + safeErr + '</div>';
         } else {
             // never attempted for this date in this browser
             el.innerHTML = '<span style="color:#999">☁️ Not yet synced today</span>';
